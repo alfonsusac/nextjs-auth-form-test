@@ -3,25 +3,69 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  color-scheme: dark;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: white;
+  background: #111;
+  display: flex; justify-content: center; align-items: center; min-height: 100svh;
+  font-size: 12px;
+}
+main {
+  padding: 2.5rem;
+  border-radius: 1.4rem;
+  background: #0004;
+  min-width: 25rem;
+}
+h1{
+  font-size: 1.8rem; font-weight: 500; letter-spacing: -0.25px;
+}
+
+
+/* FORM ---------------------------- */
+* + form { margin-top: 1.8rem; }
+input + label { margin-top: 1.4rem; }
+label {
+  display: block; font-size: 0.9em;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+label + input { margin-top: 0.4rem; }
+input {
+  padding: 0.5rem 0.8rem; display: block; border-radius: 0.3rem; 
+  background-color: transparent; width: 100%;
+  box-shadow: 0px 0px 0px 1px #fff3;
+}
+input:focus-visible{
+  outline: solid #fff1 3px;
+  outline-offset: 2px;
+}
+* + button[type=submit] {
+  margin-block-start: 2rem;
+}
+button[type=submit] {
+  display: inline-block;
+  padding: 0.6rem;
+  padding-inline:1.4rem;
+  border-radius: 0.4rem;
+  background-color: #fffc;
+  color: black;
+  font-weight: 600;
+}
+a:hover, button:hover{
+  filter: brightness(0.9)
+}
+a:active, button:active{
+  filter: brightness(0.8)
+}
+a{
+  text-decoration: underline;
+}
+a.button{
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.4rem;
+  /* outline: 1px solid #fffc; */
 }
