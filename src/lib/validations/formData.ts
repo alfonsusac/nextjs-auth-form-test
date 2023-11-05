@@ -1,20 +1,79 @@
 import { Input } from "@/component/input"
 import { ComponentProps } from "react"
 
+const loginForm = createForm({
+  username: {
+    name: "username",
+    label: "Username",
+    validation: ,
+  }
+})
+
+function v() {
+  const res: {
+    attributes: ComponentProps<"input">
+    attributesWithLabel: ComponentProps<"input"> & { htmlFor?: string }
+    validator: ((data: FormDataEntryValue) => void)[]
+  } = {
+    attributes: {},
+    attributesWithLabel: {},
+    validator: []
+  }
+  return {
+    string: () => ({
+      
+      res
+    }),
+    number: () => ({
+      
+      res
+    }),
+    res
+  }
+}
+
+type validation = {
+  type: "text" | "number"
+} & ({
+  type: "number"
+  number: {
+    required: boolean,
+    min: number
+  }
+} | {
+  type: "text"
+  text: {
+    required: boolean,
+    max: number
+  }
+})
+
+
+const i: validation = {
+  type: "number",
+  number: {
+    min: 3,
+    required: true
+  }
+}
+
+
+
 export function createForm(
   formShapeDescription:
     {
       [key: string]: {
         name: string,
         label: string,
-        validation: (`string` | `required` | `password` | `max-${number}` | `min-${number}`)[]
+        // validation: (`string` | `required` | `password` | `max-${number}` | `min-${number}`)[]
+        validation: any
       }
     }
 ) {
   const form: {
     [key in keyof typeof formShapeDescription]: {
       attributes: ComponentProps<"input">,
-      attributesWithLabel: ComponentProps<"input"> & { htmlFor: string }
+      attributesWithLabel: ComponentProps<"input"> & { htmlFor?: string }
       validator: ((data: FormDataEntryValue) => void)[]
     }
   } = {}
@@ -39,7 +98,7 @@ export function createForm(
     if (validation.includes('string')) {
       attributes.type = 'text'
       validator.push((data: FormDataEntryValue) => {
-        if(typeof data !== "string") throw new Error(`Field ${label} has to be a text!`)
+        if (typeof data !== "string") throw new Error(`Field ${label} has to be a text!`)
       })
     }
 
@@ -49,7 +108,6 @@ export function createForm(
 
     if (validation.includes('required')) {
       attributes.required = true
-  
     }
 
     const max = validation.find(v => v.startsWith('max-')) as `max-${number}` | undefined
