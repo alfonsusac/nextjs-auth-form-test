@@ -1,42 +1,56 @@
-function getMessageContext(
-  ctx: {
-    label: string,
-    value: string,
-  },
-  message?: string | (
-    (label: string, value: string) => string
-  )
-) {
-  return typeof message === 'function' ? message(ctx.label, ctx.value) : message
+type ValidationErrorType = "FieldRequired" | "FieldNotAText" | "FieldNotANumber"
+
+export type ValidationError = {
+  field: string,
+  type: ValidationErrorType
 }
 
-export type ValidationMessage = string | ((label: string, value: string) => string) | undefined
-export type ValidatorFn = (
-  context: {
-    label: string,
-    value: string,
-  },
-  data: FormDataEntryValue,
-) => void
+import { ComponentProps } from "react"
 
-export type Validator = (
-  message?: ValidationMessage
-) => ValidatorFn
-
-
-export const validators = {
-  required(msg) {
-    return (ctx, data) => {
-      const errormsg = getMessageContext(ctx, msg)
-      if (!data) throw errormsg ?? "One of the field is required!"
-    }
-  },
-  text(msg) {
-    return (ctx, data) => {
-      const errormsg = getMessageContext(ctx, msg)
-      if (typeof data !== "string") throw errormsg ?? "One of the field is not a text!"
-    }
+export class Field {
+  attributes: ComponentProps<"input"> = {}
+  validator: ({ fn: (data: FormDataEntryValue | null) => boolean, type: ValidationErrorType })[] = []
+  
+  constructor(
+    public name: string,
+    public label: string,
+  ) { 
+    this.attributes.name = this.name
   }
-} satisfies {
-  [key: string]: Validator
+
+  required() {
+    this.attributes.required = true
+    this.validator.push({
+      fn: data => !data,
+      type: "FieldRequired"
+    })
+  }
+
+  text() {
+    this.attributes.type = "text"
+    this.validator.push({
+      fn: data => typeof data !== "string",
+      type: "FieldNotAText"
+    })
+  }
+
+  number() {
+    this.attributes.type = "number"
+    this.validator.push({
+      fn: data => typeof data !== "number",
+      type: "FieldNotANumber"
+    })
+  }
+
+  password() {
+    this.attributes.type = "password"
+  }
+  email() {
+    this.attributes.type = "email"
+    // add server-side email validator here
+  }
+
+  parse(input: FormDataEntryValue) {
+    
+  }
 }

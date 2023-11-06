@@ -1,136 +1,106 @@
-import { Input } from "@/component/input"
-import { ComponentProps } from "react"
-
-const loginForm = createForm({
-  username: {
-    name: "username",
-    label: "Username",
-    validation: ,
-  }
-})
-
-function v() {
-  const res: {
-    attributes: ComponentProps<"input">
-    attributesWithLabel: ComponentProps<"input"> & { htmlFor?: string }
-    validator: ((data: FormDataEntryValue) => void)[]
-  } = {
-    attributes: {},
-    attributesWithLabel: {},
-    validator: []
-  }
-  return {
-    string: () => ({
-      
-      res
-    }),
-    number: () => ({
-      
-      res
-    }),
-    res
-  }
-}
-
-type validation = {
-  type: "text" | "number"
-} & ({
-  type: "number"
-  number: {
-    required: boolean,
-    min: number
-  }
-} | {
-  type: "text"
-  text: {
-    required: boolean,
-    max: number
-  }
-})
+import { ValidatorOptions } from "./fieldBuilder"
+import { Field, ValidationError } from "./validator"
 
 
-const i: validation = {
-  type: "number",
-  number: {
-    min: 3,
-    required: true
-  }
-}
+type If<X, Y, T, F> = X extends Y ? T : F
 
-
-
-export function createForm(
-  formShapeDescription:
-    {
-      [key: string]: {
-        name: string,
-        label: string,
-        // validation: (`string` | `required` | `password` | `max-${number}` | `min-${number}`)[]
-        validation: any
-      }
-    }
+export function createForm<FormShape extends { [key: string]: ValidatorOptions }>(
+  formDescription: FormShape
 ) {
-  const form: {
-    [key in keyof typeof formShapeDescription]: {
-      attributes: ComponentProps<"input">,
-      attributesWithLabel: ComponentProps<"input"> & { htmlFor?: string }
-      validator: ((data: FormDataEntryValue) => void)[]
-    }
-  } = {}
+  const fields: { [key: string]: Field } = {}
 
-  for (const fieldName in formShapeDescription) {
+  for (const fieldName in formDescription) {
     // input
-    const fieldDescription = formShapeDescription.field
-    const validation = fieldDescription.validation
-    const label = fieldDescription.label
+    const fieldDesc = formDescription[fieldName]
+    const label = fieldDesc.label
     // output
-    const { attributes, attributesWithLabel, validator } = form[fieldName]
-    const field = form[fieldName]
-
-    // assign name and label
-    attributes.name = fieldDescription.name
-    attributesWithLabel.htmlFor = fieldDescription.name
-
-    // initialize validator
-    field.validator = []
+    const field = fields[fieldName] = new Field(fieldName, label)
 
     // Validations handling
-    if (validation.includes('string')) {
-      attributes.type = 'text'
-      validator.push((data: FormDataEntryValue) => {
-        if (typeof data !== "string") throw new Error(`Field ${label} has to be a text!`)
-      })
+    if ("required" in fieldDesc && fieldDesc.required) {
+      field.required()
     }
-
-    if (validation.includes('password')) {
-      attributes.type = 'password'
+    if ("text" in fieldDesc && fieldDesc.text) {
+      field.text()
     }
-
-    if (validation.includes('required')) {
-      attributes.required = true
+    if ("password" in fieldDesc && fieldDesc.password) {
+      field.password()
     }
-
-    const max = validation.find(v => v.startsWith('max-')) as `max-${number}` | undefined
-    if (max) {
-      const maxLetter = parseInt(max.substring(4))
-      attributes.max = maxLetter
-    }
-
-    const min = validation.find(v => v.startsWith('min-')) as `min-${number}` | undefined
-    if (min) {
-      const minLetter = parseInt(min.substring(4))
-      attributes.min = minLetter
+    if ("email" in fieldDesc && fieldDesc.email) {
+      field.email()
     }
 
     // More to be added :eyes: (add more here)
+  }
 
+  const form: {
 
-    // Copy all of attributes to attributesWithLabel
-    Object.assign(field.attributesWithLabel, field.attributes)
+    // To be used in input components
+    fields: { [key in keyof FormShape]: Field },
+
+    // To be used in server-side validation
+    validate: <T extends boolean | undefined = undefined>(formData: FormData, checkAll?: T) => (
+      ({ ok: false, error: T extends true ? ValidationError[] : ValidationError } |
+        ({ ok: true } & { [key in keyof FormShape]:
+          FormShape[key]['required'] extends {} ?
+          FormShape[key]["file"] extends {} ? File : string :
+          FormShape[key]["file"] extends {} ? File : string | undefined
+        }))
+    )
+
+  } = {
+    fields: fields as { [key in keyof FormShape]: Field },
+    validate: (formData: FormData, checkAll?: boolean) => {
+      const fieldValues: { [key: string]: string | File | null } = {}
+      const errors: ValidationError[] = []
+
+      // Iterate each field in a form
+      for (const field in fields) {
+
+        // Get input value of field
+        const fieldValue = formData.get(field)
+
+        // Iterate each validator in a field.
+        for (const validator of fields[field].validator) {
+
+          // If it breaks validation rules then return
+          if (validator.fn(fieldValue)) {
+            if (!checkAll)
+              return {
+                ok: false,
+                error: {
+                  field,
+                  type: validator.type
+                } as any
+              }
+            else
+              errors.push({ field, type: validator.type })
+          }
+
+        }
+
+        fieldValues[field] = fieldValue as string
+      }
+
+      // Else, if it has any error then return later
+      if (checkAll && errors.length > 0)
+        return {
+          ok: false,
+          error: errors as ValidationError[]
+        }
+      else
+        return {
+          ok: true,
+          ...fieldValues as { [key in keyof FormShape]: FormShape[key]["file"] extends {} ? File : string }
+        }
+
+    }
   }
 
   return form
 }
+
+
 
 export function validateFormData(
   formData: FormData,

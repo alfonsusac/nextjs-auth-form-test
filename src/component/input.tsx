@@ -1,13 +1,14 @@
 import { ComponentProps } from "react"
 
 export function Input(p: {
-  name: string
   label: string
-} & Pick<ComponentProps<"input">, "type">){
+} & ComponentProps<"input">) {
+  
+  const { label, ...rest } = p;
   return (
     <>
-      <label htmlFor={ p.name }>{ p.label }</label>
-      <input name={ p.name } type={ p.type } />
+      <label htmlFor={ p.name }>{ label }</label>
+      <input {...rest} />
     </>
   )
 }

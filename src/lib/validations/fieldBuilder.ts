@@ -1,62 +1,47 @@
-const i: ValidatorBuilder = {
-  required: true,
-  number: {
-    max: 3,
-    min: 4,
-    integer: true
-  },
-}
-const j: ValidatorBuilder = {
-  text: {
-    max: 5,
-    min: 3,
-    email: true,
-  }
+const text: ValidatorOptions = {
+  label: "sdfasdf",
+  text: {}
 }
 
-type ValidatorBuilder =
+export type ValidatorOptions =
   | {
-    required?: true
+    label: string
+    required?: string
   }
   & (
-    // TEXT 
     | {
+      // TEXT 
       number?: undefined
-      text: GeneralTextValidator & (
-        {
-          email?: undefined
-          url?: undefined
-          password?: boolean
-        } | {
-          email?: boolean
-        } | {
-          url?: boolean
-        }
-      )
+      text?: {} | string,
+      email?: undefined
+      url?: undefined
+      max?: number
+      min?: number
+      pattern?: ({ errormsg: string; validator: (val: string) => boolean })[]
     }
-
-    // NUMBER
     | {
-      number: {
-        integer?: true
-        max?: number
-        min?: number
-      }
+      password?: {} | string
     }
-
-    // TIME
     | {
-
+      email?: {} | string
     }
-  )
+    | {
+      url?: {} | string
+    }
+    | {
+      // NUMBER
+      number: {}
+      integer?: true
+      max?: number
+      min?: number
+      pattern?: ({ errormsg: string; validator: (val: string) => boolean })[]
+    }
+    | {
+      // FILE
+      file?: {} | string
+    }
+  ) & {
+    [key: string]: {} | string
+  }
 
-type GeneralTextValidator = {
-  max?: number
-  min?: number
-  pattern?: ({ errormsg: string; validator: (val: string) => boolean })[]
-}
-type SpecificTextValidator = {
 
-} | {
-
-}

@@ -22,6 +22,15 @@ h1{
   font-size: 1.8rem; font-weight: 500; letter-spacing: -0.25px;
 }
 
+/* CUSTOM COMPONENT -----------------*/
+.callout-error {
+  padding: 0.7rem;
+  border-radius: 4px;
+  box-shadow: 0px 0px 0px 1px #f338;
+  background-color: #f332;
+  margin-bottom: 1rem;
+}
+
 
 /* FORM ---------------------------- */
 * + form { margin-top: 1.8rem; }

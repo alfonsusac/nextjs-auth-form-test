@@ -1,51 +1,21 @@
-import { redirect } from "next/navigation"
-import { cookies, headers } from "next/headers"
 import { Input } from "@/component/input"
-import { ComponentProps } from "react"
-
-const inputs = {
-  usr: {
-    attributes: {
-      name: "usr",
-      label: "Username",
-      type: "text",
-    },
-    validation: [`string`, `required`]
-  },
-  pwd: {
-    attributes: {
-      name: "pwd",
-      label: "Password",
-      type: "password",
-    },
-    validation: [`string`, `required`]
-  },
-} satisfies { [key: string]: { attributes: ComponentProps<typeof Input>, validation: (`string` | `required` | ``)[] } }
+import { login } from "@/actions/authentication"
+import { loginForm } from "./forms"
+import { cookies } from "next/headers"
 
 
-export default function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-  async function login(data: FormData) {
-    "use server"
-    const username = data.get("usr")
-    const password = data.get("pwd")
+export default function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-    const header = headers()
-    console.log(Object.fromEntries(header))
-
-    // cookies().set('login-username', data.set('username'))
-    // console.log(data)
-    return redirect('?test=hello')
-  }
-
+  const prevUsr = cookies().get("username-autofill")?.value
   return (
     <main>
       <section>
         <h1>Login</h1>
-
         <form action={ login }>
-          <Input { ...inputs.usr } />
-          <Input { ...inputs.pwd } />
+          { searchParams.error && <div className="callout-error">Error: { searchParams.error }</div> }
+          <Input { ...loginForm.fields.usr.attributes } label={ loginForm.fields.usr.label } defaultValue={prevUsr} />
+          <Input { ...loginForm.fields.pwd.attributes } label={ loginForm.fields.pwd.label } />
           <button type="submit">Login</button>
           <a href="/register" className="button">Register</a>
         </form>
