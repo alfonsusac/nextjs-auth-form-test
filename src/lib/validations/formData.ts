@@ -2,8 +2,6 @@ import { ValidatorOptions } from "./fieldBuilder"
 import { Field, ValidationError } from "./validator"
 
 
-type If<X, Y, T, F> = X extends Y ? T : F
-
 export function createForm<FormShape extends { [key: string]: ValidatorOptions }>(
   formDescription: FormShape
 ) {
@@ -42,7 +40,7 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
     validate: <T extends boolean | undefined = undefined>(formData: FormData, checkAll?: T) => (
       ({ ok: false, error: T extends true ? ValidationError[] : ValidationError } |
         ({ ok: true } & { [key in keyof FormShape]:
-          FormShape[key]['required'] extends {} ?
+          FormShape[key]['required'] extends {} ? 
           FormShape[key]["file"] extends {} ? File : string :
           FormShape[key]["file"] extends {} ? File : string | undefined
         }))

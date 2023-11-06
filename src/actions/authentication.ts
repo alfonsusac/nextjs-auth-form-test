@@ -24,6 +24,8 @@ export async function login(formData: FormData) {
     if (!await Cryptography.verify(user.password, pwd))
       Error.setSearchParam({ error: "Wrong Password!" })
 
+    // successfull authentication
+
     redirect('/app')
 
   } catch (error) {
