@@ -5,12 +5,18 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@panva/hkdf':
+    specifier: ^1.1.1
+    version: 1.1.1
   '@prisma/client':
     specifier: 5.5.2
     version: 5.5.2(prisma@5.5.2)
   argon2:
     specifier: ^0.31.2
     version: 0.31.2
+  jose:
+    specifier: ^5.1.0
+    version: 5.1.0
   next:
     specifier: 14.0.2-canary.11
     version: 14.0.2-canary.11(react-dom@18.2.0)(react@18.2.0)
@@ -291,6 +297,10 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@panva/hkdf@1.1.1:
+    resolution: {integrity: sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==}
+    dev: false
 
   /@phc/format@1.0.0:
     resolution: {integrity: sha512-m7X9U6BG2+J+R1lSOdCiITLLrxm+cWlNI3HUFA92oLO77ObGNzaKdh8pMLqdZcshtkKuV84olNNXDfMc4FezBQ==}
@@ -1783,6 +1793,10 @@ packages:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
     dev: true
+
+  /jose@5.1.0:
+    resolution: {integrity: sha512-H+RVqxA6apaJ0rcQYupKYhos7uosAiF42gUcWZiwhICWMphDULFj/CRr1R0tV/JCv9DEeJaSyYYpc9luHHNT4g==}
+    dev: false
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

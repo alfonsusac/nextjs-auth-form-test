@@ -1,3 +1,4 @@
+import { Cookie, ReadOnlyCookie } from "../cookies"
 import { ValidatorOptions } from "./fieldBuilder"
 import { Field, ValidationError } from "./validator"
 
@@ -6,13 +7,34 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
   formDescription: FormShape
 ) {
   const fields: { [key: string]: Field } = {}
+  const defaultFieldValueReadOnlyCookies: {
+    [key in keyof FormShape]:
+    FormShape[key]["file"] extends {} ? undefined :
+    FormShape[key]["persistValue"] extends {} ? ReadOnlyCookie : undefined
+  } = {} as any
+  const defaultFieldValueCookies: {
+    [key in keyof FormShape]:
+    FormShape[key]["file"] extends {} ? undefined :
+    FormShape[key]["persistValue"] extends {} ? Cookie : undefined
+  } = {} as any
+
 
   for (const fieldName in formDescription) {
+
+
+
     // input
     const fieldDesc = formDescription[fieldName]
     const label = fieldDesc.label
     // output
     const field = fields[fieldName] = new Field(fieldName, label)
+
+    // set defaultvalue cookie
+    if (!fieldDesc.file && fieldDesc.persistValue) {
+      const cookie = Cookie.create(fieldName)
+      defaultFieldValueCookies[fieldName] = cookie as any
+      defaultFieldValueReadOnlyCookies[fieldName] = cookie.readOnly as any
+    }
 
     // Validations handling
     if ("required" in fieldDesc && fieldDesc.required) {
@@ -37,14 +59,26 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
     fields: { [key in keyof FormShape]: Field },
 
     // To be used in server-side validation
+    // - return array of error if `checkAll` is true
+    // - for each field:
+    //   - return string if key is not file
+    //   - return file if key is file
     validate: <T extends boolean | undefined = undefined>(formData: FormData, checkAll?: T) => (
       ({ ok: false, error: T extends true ? ValidationError[] : ValidationError } |
         ({ ok: true } & { [key in keyof FormShape]:
-          FormShape[key]['required'] extends {} ? 
+          FormShape[key]['required'] extends {} ?
           FormShape[key]["file"] extends {} ? File : string :
           FormShape[key]["file"] extends {} ? File : string | undefined
         }))
     )
+
+    // To be used to provide default values.
+    // - only if enabled
+    defaultValues: {
+      [key in keyof FormShape]:
+      FormShape[key]["file"] extends {} ? undefined :
+      FormShape[key]["persistValue"] extends {} ? ReadOnlyCookie : undefined
+    }
 
   } = {
     fields: fields as { [key in keyof FormShape]: Field },
@@ -58,6 +92,10 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
         // Get input value of field
         const fieldValue = formData.get(field)
 
+        if (typeof fieldValue === "string") {
+          defaultFieldValueCookies[field]?.set(fieldValue)
+        }
+
         // Iterate each validator in a field.
         for (const validator of fields[field].validator) {
 
@@ -66,10 +104,7 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
             if (!checkAll)
               return {
                 ok: false,
-                error: {
-                  field,
-                  type: validator.type
-                } as any
+                error: { field, type: validator.type } as any
               }
             else
               errors.push({ field, type: validator.type })
@@ -89,10 +124,10 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
       else
         return {
           ok: true,
-          ...fieldValues as { [key in keyof FormShape]: FormShape[key]["file"] extends {} ? File : string }
+          ...fieldValues as { [key in keyof FormShape]: FormShape[key]["file"] extends {} ? File : string },
         }
-
-    }
+    },
+    defaultValues: defaultFieldValueReadOnlyCookies
   }
 
   return form

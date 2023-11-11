@@ -1,25 +1,47 @@
-import { Input } from "@/component/input"
-import { login } from "@/actions/authentication"
-import { loginForm } from "./forms"
-import { cookies } from "next/headers"
+import { authCookie, jwtsecret } from "@/api/auth/actions"
+import * as jose from 'jose'
 
 
+export default async function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-export default function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
+  const auth = authCookie.readOnly.get()
+  let data
+  let errorMsg
+  if (auth) {
+    try {
+      data = await jose.jwtVerify(auth, jwtsecret, {
+        issuer: "alfon-auth",
+      })
+    } catch (error) {
+      errorMsg = JSON.stringify(error, null, 1)
+    }
+  }
 
-  const prevUsr = cookies().get("username-autofill")?.value
   return (
-    <main>
-      <section>
-        <h1>Login</h1>
-        <form action={ login }>
-          { searchParams.error && <div className="callout-error">Error: { searchParams.error }</div> }
-          <Input { ...loginForm.fields.usr.attributes } label={ loginForm.fields.usr.label } defaultValue={prevUsr} />
-          <Input { ...loginForm.fields.pwd.attributes } label={ loginForm.fields.pwd.label } />
-          <button type="submit">Login</button>
-          <a href="/register" className="button">Register</a>
-        </form>
-      </section>
-    </main>
+    <article>
+      <h2>
+        Welcome!
+      </h2>
+      <span>{ data?.payload.sub ? `Logged in as: ${data?.payload.sub}` : `Not Logged in` }</span>
+
+      <header>
+        Cookie payload: <br />
+      </header>
+      <p>
+        { JSON.stringify(auth, null, 1) }
+      </p>
+      <header>
+        JSON payload: <br />
+      </header>
+      <pre>
+        { JSON.stringify(data, null, 1) }
+      </pre>
+      <header>
+        Error: <br />
+      </header>
+      <pre>
+        { errorMsg }
+      </pre>
+    </article>
   )
 }

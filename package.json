@@ -6,15 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "prod": "next build && next start", 
+    "prod": "next build && next start",
     "lint": "next lint",
     "sql": "./sqlite/sqlite3",
     "db": "./sqlite/sqlite3 next-auth.db",
     "generate": "prisma db push"
   },
   "dependencies": {
+    "@panva/hkdf": "^1.1.1",
     "@prisma/client": "5.5.2",
     "argon2": "^0.31.2",
+    "jose": "^5.1.0",
     "next": "14.0.2-canary.11",
     "prisma": "^5.5.2",
     "react": "^18",

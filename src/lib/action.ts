@@ -13,6 +13,9 @@ export namespace Error {
     if (error.message === "NEXT_REDIRECT")
       throw error
   }
+  export function includes(error: any | unknown, phrase: string) {
+    return JSON.stringify(error).includes(phrase)
+  }
 }
 
 export namespace Response {

@@ -1,3 +1,4 @@
+import hkdf from "@panva/hkdf"
 import argon2 from "argon2"
 
 interface Hasher {
@@ -18,5 +19,21 @@ export namespace Cryptography {
   export async function verify(hash: string, input: string) {
     return await hasher.verify(hash, input)
   }
-}
 
+  /**
+   * Gets Derived Encryption Key
+   * 
+   * Derived encrypted keys can be used to generate keys of different 
+   * lengths and strengths, depending on the specific application. 
+   * 
+   * This allows for a more tailored security solution.
+ */
+  export async function getEncryptionKey(sourceKey: string) {
+    const digest = "sha256"
+    const ikm = sourceKey
+    const salt = ""
+    const info = "Alfon-Auth.js Generated Encryption Key"
+    const keylen = 32
+    return await hkdf(digest, ikm, salt, info, keylen)
+  }
+}

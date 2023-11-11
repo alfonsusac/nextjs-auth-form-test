@@ -7,6 +7,7 @@ export type ValidatorOptions =
   | {
     label: string
     required?: string
+    persistValue?: {}
   }
   & (
     | {
