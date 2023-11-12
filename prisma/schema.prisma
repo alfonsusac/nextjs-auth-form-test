@@ -11,7 +11,14 @@ datasource db {
 }
 
 model User {
-  username String @id
-  email    String @unique
-  password String 
+  username     String            @id
+  email        String            @unique
+  password     String
+  verification UserVerification?
+}
+
+model UserVerification {
+  user     User    @relation(fields: [username], references: [username])
+  username String  @unique
+  verified Boolean
 }

@@ -1,9 +1,6 @@
 import { Input } from "@/component/input"
-import { cookies } from "next/headers"
-import { redirectWithError, redirectWithUnknownError } from "@/lib/action"
-import { login } from "@/api/authentication"
-import { authCookie } from "@/api/auth/actions"
-import { redirect } from "next/navigation"
+import { redirectSuccess, redirectWithError, redirectWithUnknownError } from "@/lib/action"
+import { authCookie, login } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
 
 
@@ -64,7 +61,7 @@ function LoginButton() {
         }
 
         authCookie.set(res.jwt)
-        redirect('/?success=Successfuly logged in')
+        redirectSuccess('Successfuly logged in')
       }
     } >
       Login

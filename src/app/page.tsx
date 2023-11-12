@@ -1,7 +1,5 @@
-import { authCookie } from "@/api/auth/actions"
-import { auth } from "@/api/authentication"
+import { auth, authCookie } from "@/api/authentication"
 import { ShowWhenLoggedIn } from "@/component/authentication"
-import { JWT } from "@/lib/jwt"
 import { redirect } from "next/navigation"
 
 
@@ -26,7 +24,10 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
 
       <ShowWhenLoggedIn
         fallback={
-          <a href="/login" data-primary>Log in</a>
+          <>
+            <a href="/login" data-primary>Log in</a>
+            <a href="/register" data-primary>Register</a>
+          </>
         }
       >
         <form>

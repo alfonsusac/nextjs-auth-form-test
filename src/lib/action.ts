@@ -45,3 +45,8 @@ export function redirectWithError(error: string): never {
 export function redirectWithUnknownError(): never {
   redirectWithError("Unknown server error")
 }
+export function redirectSuccess(msg: string): never {
+  const searchParams = Referer.getSearchParam()
+  searchParams.set("success", msg)
+  Navigation.redirect('?' + searchParams.toString())
+}
