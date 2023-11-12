@@ -1,6 +1,7 @@
-import { auth, authCookie } from "@/api/authentication"
+import { auth, authCookie, sendEmailVerification } from "@/api/authentication"
 import { ShowWhenLoggedIn } from "@/component/authentication"
-import { redirect } from "next/navigation"
+import { redirect } from "@/lib/action"
+import { User } from "@/model/user"
 
 
 export default async function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
@@ -24,22 +25,61 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
 
       <ShowWhenLoggedIn
         fallback={
-          <>
+          <form>
             <a href="/login" data-primary>Log in</a>
             <a href="/register" data-primary>Register</a>
-          </>
+          </form>
         }
       >
         <form>
-          <button type="submit" formAction={
+          {
+            !session?.verified &&
+            <button type="submit" formAction={
+              async () => {
+
+                "use server"
+
+                const { session } = await auth()
+                if (!session) redirect('/', 'error=Not Authenticated. Please log in again.')
+
+                const data = await sendEmailVerification(session.username, session.email)
+                console.log(data)
+                redirect('/', 'success=Successful! Your email is verified.')
+
+              }
+            }>
+              Verify Email
+            </button>
+          }
+          <button formAction={
             async () => {
+
               "use server"
+
               authCookie.delete()
-              redirect(`?success=Successfully logged out`)
+              redirect('', `success=Successfully logged out`)
+
             }
           }>
             Log out
           </button>
+          <button formAction={
+            async () => {
+
+              "use server"
+
+              const { session } = await auth()
+              if (!session) redirect('/', 'error=Not Authenticated. Please log in again.')
+
+              await User.remove(session?.username, session?.email)
+              authCookie.delete()
+              redirect('/', `success=Successfully delete account`)
+
+            }
+          }>
+            Delete Account
+          </button>
+
         </form>
       </ShowWhenLoggedIn>
 

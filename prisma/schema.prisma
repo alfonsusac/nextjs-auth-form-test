@@ -18,7 +18,9 @@ model User {
 }
 
 model UserVerification {
-  user     User    @relation(fields: [username], references: [username])
-  username String  @unique
-  verified Boolean
+  id       String   @id @default(uuid())
+  user     User     @relation(fields: [username], references: [username])
+  username String   @unique
+  verified Boolean  @default(false)
+  expiry   DateTime
 }

@@ -1,10 +1,10 @@
-import { Referer } from "./referrer"
+import { Request } from "./referrer"
 import * as Navigation from "next/navigation"
 
 export namespace Error {
   export function setSearchParam(errorMessages: { [key: string]: string }): never {
 
-    const searchParams = Referer.getSearchParam()
+    const searchParams = Request.getSearchParam()
     for (const i in errorMessages) {
       searchParams.set(i, errorMessages[i])
     }
@@ -22,7 +22,7 @@ export namespace Error {
 
 export namespace Response {
   export function setSearchParam(errorMessages: { [key: string]: string }): never {
-    const searchParams = Referer.getSearchParam()
+    const searchParams = Request.getSearchParam()
     for (const i in errorMessages) {
       searchParams.set(i, errorMessages[i])
     }
@@ -31,22 +31,23 @@ export namespace Response {
 
 }
 
-export enum ErrorMessage {
-  UnknownError = "Unknown Server Error",
-
+export function redirect(path: string | undefined, query?: string ):never {
+  console.log("Redirecting to: " + path)
+  Navigation.redirect(`${path}${query ? `?${query}` : ''}`)
 }
-
-export function redirectWithError(error: string): never {
-
-  const searchParams = Referer.getSearchParam()
-  searchParams.set("error", error)
-  Navigation.redirect('?' + searchParams.toString())
-}
-export function redirectWithUnknownError(): never {
-  redirectWithError("Unknown server error")
-}
-export function redirectSuccess(msg: string): never {
-  const searchParams = Referer.getSearchParam()
+export function returnSuccessMessage(msg: string): never {
+  const searchParams = Request.getSearchParam()
   searchParams.set("success", msg)
+  searchParams.delete("error")
   Navigation.redirect('?' + searchParams.toString())
 }
+export function returnErrorMessage(error: string): never {
+  const searchParams = Request.getSearchParam()
+  searchParams.set("error", error)
+  searchParams.delete("status")
+  Navigation.redirect('?' + searchParams.toString())
+}
+export function returnUnknownError(): never {
+  returnErrorMessage("Unknown server error")
+}
+

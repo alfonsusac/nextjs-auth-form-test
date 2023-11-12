@@ -1,20 +1,28 @@
 import { Cryptography } from "@/lib/crypto"
-import { JWT } from "@/lib/jwt"
-import { User } from "@/model/user"
+import { JWT, newJWT } from "@/lib/jwt"
+import { User, UserVerification } from "@/model/user"
 import { cache } from "react"
 import { Cookie } from "@/lib/cookies"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import { PrismaClientKnownRequestError, raw } from "@prisma/client/runtime/library"
 import { Error } from "@/lib/action"
 import { resend } from "@/lib/email"
+import { Request } from "@/lib/referrer"
 
 export const secretKey = "super secret key"
+export const duration24hour = 1000 * 60 * 60 * 24
+export const emailVerificationExpiryDate = () => new Date(Date.now() + duration24hour) // 24h
+
 
 export const authCookie = Cookie.create('alfon-auth', {
   secure: true,
   httpOnly: true,
-  sameSite: "strict"
-
+  sameSite: "lax"
 })
+export const userJWT = newJWT<{
+  username: string
+  email: string
+  verified: boolean
+}>(duration24hour)
 
 
 /**
@@ -29,12 +37,10 @@ export async function login(username: string, password: string) {
     if (!await Cryptography.verify(user.password, password))
       return "Wrong password"
 
-    const jwt = await JWT.create({
-      payload: {
-        username: user.username,
-        email: user.email
-      },
-      secret: secretKey
+    const jwt = await userJWT.encode({
+      username: user.username,
+      email: user.email,
+      verified: user.verification?.verified ?? false,
     })
 
     return { jwt }
@@ -72,35 +78,59 @@ export async function register(username: string, email: string, password: string
   }
 }
 
-export async function sendEmailVerification(email: string) {
+export const verificationJWT = newJWT<{
+  verification: string
+}>(duration24hour)
+
+export async function sendEmailVerification(username: string, email: string) {
   try {
+
+    const verification = await UserVerification.setKey(username)
+    const signedVerification = await verificationJWT.encode({ verification: verification.id })
+
+    const host = Request.getServerBaseURL()
+
+
     const data = await resend.emails.send({
       from: "Verification <verification@alfon.dev>",
       to: email,
-      subject: 'Please verify your Email!',
-      text: "Hello World",
+      subject: 'Welcome! Please verify your Email',
+      text: `Hi ${username}\nThis is for Alfon's Personal Learning Journey of Authentication. Verification Link: ${host}/verify/?k=${signedVerification}`,
     })
+    console.log(data)
+
   } catch (error) {
+
     console.error(error)
     return "Unknown Server Error"
+
   }
 }
+export async function verifyVerificationKey(key: string) {
+  
+}
 
+/**
+ * Retrieves session from cookie.
+ */
 export const auth = cache(async () => {
   const rawCookie = authCookie.readOnly.get()
-  let session
-  let errorMsg
-  if (rawCookie) {
-    try {
-      session = await JWT.decode({ jwt: rawCookie, secret: secretKey })
-    } catch (error) {
-      console.error(error)
-      errorMsg = JSON.stringify(error, null, 1)
+  if (!rawCookie)
+    return {
+      errorMsg: JSON.stringify("Auth Cookie Not Found")
     }
-  }
-  return {
-    rawCookie,
-    session,
-    errorMsg
+  
+  try {
+    const session = await userJWT.decode(rawCookie)
+    return {
+      rawCookie,
+      session,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      rawCookie,
+      errorMsg: JSON.stringify(error, null, 1)
+    }
   }
 })

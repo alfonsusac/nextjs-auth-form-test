@@ -126,11 +126,11 @@ input:focus-visible{
   outline: solid #fff1 3px;
   outline-offset: 2px;
 }
-* + button[type=submit],
+/* * + button[type=submit],
 * + a[data-primary]
 {
   margin-block: 1rem;
-}
+} */
 
 button[type=submit], a[data-primary] {
   display: inline-block;
