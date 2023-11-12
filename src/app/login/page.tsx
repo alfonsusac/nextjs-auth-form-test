@@ -1,23 +1,73 @@
 import { Input } from "@/component/input"
-import { login } from "@/api/auth/actions"
 import { cookies } from "next/headers"
-import { loginForm } from "../forms"
+import { redirectWithError, redirectWithUnknownError } from "@/lib/action"
+import { login } from "@/api/authentication"
+import { authCookie } from "@/api/auth/actions"
+import { redirect } from "next/navigation"
+import { createForm } from "@/lib/validations/formData"
 
 
+
+const loginForm = createForm({
+  'usr': {
+    label: "Username",
+    required: "Username is required!",
+    text: "Username has to be a text!",
+    persistValue: {}
+  },
+  'pwd': {
+    label: "Password",
+    required: "Password is required!",
+    password: "Password has to be a text!",
+    min: 8,
+
+  },
+})
 
 export default function LoginPage({ searchParams }: { searchParams: { [key: string]: string } }) {
-
-  const prevUsr = cookies().get("username-autofill")?.value
   return (
     <>
+      
       <h2>Login</h2>
-      <form action={ login }>
-        { searchParams.error && <div className="callout-error">{ searchParams.error }</div> }
+      <form>
+        { searchParams.error &&
+          <div data-callout-error>{ searchParams.error }</div>
+        }
         <Input { ...loginForm.fields.usr.attributes } label={ loginForm.fields.usr.label } defaultValue={ loginForm.defaultValues.usr.get() } />
         <Input { ...loginForm.fields.pwd.attributes } label={ loginForm.fields.pwd.label } />
-        <button type="submit">Login</button>
+        <br />
+        <LoginButton />
         <a href="/register" className="button">Register</a>
-      </form>
+      </form >
     </>
+  )
+}
+
+
+function LoginButton() {
+  return (
+    <button type="submit" formAction={
+      async (formData) => {
+        "use server"
+
+        const input = loginForm.validate(formData)
+        if (!input.ok)
+          redirectWithError("Invalid input")
+
+        const res = await login(input.usr, input.pwd)
+        switch (res) {
+          case "Unknown Server Error":
+            redirectWithUnknownError()
+          case "User not found":
+          case "Wrong password":
+            redirectWithError("Invalid credentials")
+        }
+
+        authCookie.set(res.jwt)
+        redirect('/?success=Successfuly logged in')
+      }
+    } >
+      Login
+    </button>
   )
 }

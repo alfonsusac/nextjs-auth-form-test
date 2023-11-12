@@ -2,13 +2,15 @@ import { Referer } from "./referrer"
 import * as Navigation from "next/navigation"
 
 export namespace Error {
-  export function setSearchParam(errorMessages: {[key: string]: string}): never {
+  export function setSearchParam(errorMessages: { [key: string]: string }): never {
+
     const searchParams = Referer.getSearchParam()
     for (const i in errorMessages) {
       searchParams.set(i, errorMessages[i])
     }
     Navigation.redirect('?' + searchParams.toString())
   }
+
   export function handleActionError(error: any | unknown) {
     if (error.message === "NEXT_REDIRECT")
       throw error
@@ -27,4 +29,19 @@ export namespace Response {
     Navigation.redirect('?' + searchParams.toString())
   }
 
+}
+
+export enum ErrorMessage {
+  UnknownError = "Unknown Server Error",
+
+}
+
+export function redirectWithError(error: string): never {
+
+  const searchParams = Referer.getSearchParam()
+  searchParams.set("error", error)
+  Navigation.redirect('?' + searchParams.toString())
+}
+export function redirectWithUnknownError(): never {
+  redirectWithError("Unknown server error")
 }

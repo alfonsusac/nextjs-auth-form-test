@@ -15,12 +15,15 @@
   "dependencies": {
     "@panva/hkdf": "^1.1.1",
     "@prisma/client": "5.5.2",
+    "@types/nodemailer": "^6.4.14",
     "argon2": "^0.31.2",
     "jose": "^5.1.0",
     "next": "14.0.2-canary.11",
+    "nodemailer": "^6.9.7",
     "prisma": "^5.5.2",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^2.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

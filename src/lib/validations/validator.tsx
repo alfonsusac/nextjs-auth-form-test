@@ -10,7 +10,7 @@ import { ComponentProps } from "react"
 export class Field {
   attributes: ComponentProps<"input"> = {}
   validator: ({ fn: (data: FormDataEntryValue | null) => boolean, type: ValidationErrorType })[] = []
-  
+
   constructor(
     public name: string,
     public label: string,

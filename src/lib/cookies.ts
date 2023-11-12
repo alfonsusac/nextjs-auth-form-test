@@ -7,6 +7,7 @@ export type Cookie = {
   has(): boolean
   set(value: string): ResponseCookies
   readOnly: ReadOnlyCookie
+  delete(): ResponseCookies
 }
 export type ReadOnlyCookie = {
   get(): string | undefined
@@ -47,6 +48,9 @@ export namespace Cookie {
         get: () => {
           return cookies().get(key)?.value
         }
+      },
+      delete() {
+        return cookies().delete(key)
       }
     }
   }

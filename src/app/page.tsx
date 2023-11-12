@@ -1,47 +1,76 @@
-import { authCookie, jwtsecret } from "@/api/auth/actions"
-import * as jose from 'jose'
+import { authCookie } from "@/api/auth/actions"
+import { auth } from "@/api/authentication"
+import { ShowWhenLoggedIn } from "@/component/authentication"
+import { JWT } from "@/lib/jwt"
+import { redirect } from "next/navigation"
 
 
 export default async function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-  const auth = authCookie.readOnly.get()
-  let data
-  let errorMsg
-  if (auth) {
-    try {
-      data = await jose.jwtVerify(auth, jwtsecret, {
-        issuer: "alfon-auth",
-      })
-    } catch (error) {
-      errorMsg = JSON.stringify(error, null, 1)
-    }
-  }
+  const { rawCookie, session, errorMsg } = await auth()
 
   return (
     <article>
-      <h2>
-        Welcome!
-      </h2>
-      <span>{ data?.payload.sub ? `Logged in as: ${data?.payload.sub}` : `Not Logged in` }</span>
 
-      <header>
-        Cookie payload: <br />
-      </header>
-      <p>
-        { JSON.stringify(auth, null, 1) }
-      </p>
-      <header>
-        JSON payload: <br />
-      </header>
-      <pre>
-        { JSON.stringify(data, null, 1) }
-      </pre>
-      <header>
-        Error: <br />
-      </header>
-      <pre>
-        { errorMsg }
-      </pre>
+      { searchParams.success &&
+        <div data-callout-success>{ searchParams.success }</div>
+      }
+
+      <h2> Welcome! </h2>
+      <span>
+        { session?.username ? `Logged in as: ${session?.username}` : `Not Logged in` }
+      </span>
+
+      <br />
+
+
+      <ShowWhenLoggedIn
+        fallback={
+          <a href="/login" data-primary>Log in</a>
+        }
+      >
+        <form>
+          <button type="submit" formAction={
+            async () => {
+              "use server"
+              authCookie.delete()
+              redirect(`?success=Successfully logged out`)
+            }
+          }>
+            Log out
+          </button>
+        </form>
+      </ShowWhenLoggedIn>
+
+      <br />
+      <br />
+
+      <small>
+        <header>
+          Cookie payload: <br />
+        </header>
+        <p>
+          { JSON.stringify(rawCookie ?? "", null, 1) }
+        </p>
+
+        <ShowWhenLoggedIn>
+          <header>
+            JSON payload: <br />
+          </header>
+          <pre>
+            { JSON.stringify(session, null, 1) }
+          </pre>
+
+          <header>
+            Error: <br />
+          </header>
+          <pre>
+            { errorMsg }
+          </pre>
+        </ShowWhenLoggedIn>
+      </small>
     </article>
   )
 }
+
+

@@ -27,15 +27,13 @@ export default function RootLayout({
               <h1>Next Auth Simple Login</h1>
             </section>
             <nav>
-              <a href="/">Home</a>  
-              <a href="/login">Login</a>
-              <a href="/register">Register</a>
+              <a href="/" data-inline>Home</a>  
             </nav>
             <br />
           </header>
           { children }
         </main>
-      </body>
+      </body> 
     </html>
   )
 }

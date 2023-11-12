@@ -1,12 +1,10 @@
-import { emailAutofill, loginForm, registerForm, usernameAutofill } from "@/app/forms"
+import { registerForm } from "@/app/forms"
 import { User } from "@/model/user"
 import { Error } from "@/lib/action"
 import { Cryptography } from "@/lib/crypto"
 import { redirect } from "next/navigation"
 import { Cookie } from "@/lib/cookies"
-import * as jose from 'jose'
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-import crypto, { verify } from "node:crypto"
 
 const privateKey = "Insert Cryptographically Strong Key Here (Secret Key/Private Key)"
 export const jwtsecret = new TextEncoder().encode(
@@ -19,51 +17,6 @@ export const authCookie = Cookie.create('alfon-auth', {
   sameSite: "strict"
 
 })
-
-// Logs in user
-export async function login(formData: FormData) {
-  "use server"
-
-  // Validation
-  const data = loginForm.validate(formData)
-  if (!data.ok) Error.setSearchParam({ error: "Invalid input" })
-  const { usr, pwd } = data
-
-  try {
-    const user = await User.find(usr)
-
-    if (!user)
-      Error.setSearchParam({ error: "User not found!" })
-
-    if (!await Cryptography.verify(user.password, pwd))
-      Error.setSearchParam({ error: "Wrong Password!" })
-
-    // successfull authentication
-
-
-    
-    const jwt = await new jose.SignJWT()
-      .setProtectedHeader({ alg: "HS256", typ: "jwt", })
-      .setSubject(usr)
-      .setIssuedAt()
-      .setIssuer('alfon-auth')
-      .setExpirationTime('2h')
-      .sign(jwtsecret)
-    
-    
-    
-    // const hmac = crypto.createHmac("sha256", privateKey)
-    // const signedJwt = hmac.update(jwt).digest('base64')
-    // authCookie.set(signedJwt)
-
-    authCookie.set(jwt)
-    redirect('/')
-
-  } catch (error) {
-    Error.handleActionError(error)
-    Error.setSearchParam({ error: "Unknown Server Error" })
-  }
-}
 
 // Register user
 export async function register(formData: FormData) {
@@ -91,9 +44,4 @@ export async function register(formData: FormData) {
   }
   redirect("/")
 
-}
-
-
-export async function auth() {
-  
 }

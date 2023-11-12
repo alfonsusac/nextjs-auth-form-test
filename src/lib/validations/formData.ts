@@ -79,7 +79,6 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
       FormShape[key]["file"] extends {} ? undefined :
       FormShape[key]["persistValue"] extends {} ? ReadOnlyCookie : undefined
     }
-
   } = {
     fields: fields as { [key in keyof FormShape]: Field },
     validate: (formData: FormData, checkAll?: boolean) => {
