@@ -1,7 +1,8 @@
 import { auth, authCookie, sendEmailVerification } from "@/api/authentication"
 import { ShowWhenLoggedIn } from "@/component/authentication"
-import { redirect } from "@/lib/action"
+import { redirect } from "@/lib/error"
 import { User } from "@/model/user"
+import { Suspense } from "react"
 
 
 export default async function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
@@ -21,7 +22,6 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
       </span>
 
       <br />
-
 
       <ShowWhenLoggedIn
         fallback={
@@ -90,24 +90,18 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
         <header>
           Cookie payload: <br />
         </header>
-        <p>
-          { JSON.stringify(rawCookie ?? "", null, 1) }
-        </p>
+        <p>{ JSON.stringify(rawCookie ?? "", null, 1) }</p>
 
         <ShowWhenLoggedIn>
           <header>
             JSON payload: <br />
           </header>
-          <pre>
-            { JSON.stringify(session, null, 1) }
-          </pre>
+          <pre>{ JSON.stringify(session, null, 1) }</pre>
 
           <header>
             Error: <br />
           </header>
-          <pre>
-            { errorMsg }
-          </pre>
+          <pre>{ errorMsg }</pre>
         </ShowWhenLoggedIn>
       </small>
     </article>
@@ -115,3 +109,12 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
 }
 
 
+async function DelayedAction() {
+  await delay(2000)
+  console.log("Delayed?")
+  return <div>Test</div>
+}
+
+async function delay(msecs: number) {
+  return new Promise((resolve) => setTimeout(resolve, msecs))
+}

@@ -1,5 +1,5 @@
 import { Input } from "@/component/input"
-import { Error, redirect, returnErrorMessage, returnSuccessMessage, returnUnknownError } from "@/lib/action"
+import { Error, redirect, returnErrorMessage, returnSuccessMessage, returnUnknownError } from "@/lib/error"
 import { register, sendEmailVerification } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
 
@@ -40,7 +40,7 @@ export default function RegisterPage({ searchParams }: { searchParams: { [key: s
             async (formData) => {
               "use server"
               const input = registerForm.validate(formData)
-              if (!input.ok) Error.setSearchParam({ error: "Invalid input" })
+              if (!input.ok) returnErrorMessage("Invalid input")
 
               const res = await register(input.usr, input.eml, input.pwd)
               switch (res) {

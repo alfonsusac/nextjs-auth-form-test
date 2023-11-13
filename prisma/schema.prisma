@@ -13,8 +13,15 @@ datasource db {
 model User {
   username     String            @id
   email        String            @unique
-  password     String
+  provider     String // "password" | "magiclink"
+  password     UserPassword?
   verification UserVerification?
+}
+
+model UserPassword {
+  username String @id @unique
+  user     User   @relation(fields: [username], references: [username])
+  value    String
 }
 
 model UserVerification {

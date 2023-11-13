@@ -1,5 +1,5 @@
 import { auth, sendEmailVerification } from "@/api/authentication"
-import { redirect } from "@/lib/action"
+import { redirect } from "@/lib/error"
 
 export default async function Page() {
   const { session } = await auth()

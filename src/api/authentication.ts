@@ -1,11 +1,11 @@
 import { Cryptography } from "@/lib/crypto"
 import { JWT, newJWT } from "@/lib/jwt"
-import { User, UserVerification } from "@/model/user"
+import { Password, User, UserVerification } from "@/model/user"
 import { cache } from "react"
 import { Cookie } from "@/lib/cookies"
 import { PrismaClientKnownRequestError, raw } from "@prisma/client/runtime/library"
-import { Error } from "@/lib/action"
-import { resend } from "@/lib/email"
+import { Error } from "@/lib/error"
+import { Email, resend, verifyViaEmail } from "@/lib/email"
 import { Request } from "@/lib/referrer"
 
 export const secretKey = "super secret key"
@@ -31,16 +31,16 @@ export const userJWT = newJWT<{
  */
 export async function login(username: string, password: string) {
   try {
-    const user = await User.find(username)
-    if (!user) return "User not found"
+    const storedpassword = await Password.find(username)
+    if (!storedpassword) return "User not found"
 
-    if (!await Cryptography.verify(user.password, password))
+    if (!await Cryptography.verify(storedpassword.value, password))
       return "Wrong password"
 
     const jwt = await userJWT.encode({
-      username: user.username,
-      email: user.email,
-      verified: user.verification?.verified ?? false,
+      username: storedpassword.user.username,
+      email: storedpassword.user.email,
+      verified: storedpassword.user.verification?.verified ?? false,
     })
 
     return { jwt }
@@ -59,8 +59,7 @@ export async function register(username: string, email: string, password: string
   try {
 
     const hashedPwd = await Cryptography.hash(password)
-    const user = await User.create(username, email, hashedPwd)
-    return user
+    return await User.create({ username, email, provider: "password", password: hashedPwd })
 
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
@@ -90,14 +89,11 @@ export async function sendEmailVerification(username: string, email: string) {
 
     const host = Request.getServerBaseURL()
 
-
-    const data = await resend.emails.send({
-      from: "Verification <verification@alfon.dev>",
-      to: email,
+    await Email.verifyViaEmail({
+      recipient: email,
       subject: 'Welcome! Please verify your Email',
       text: `Hi ${username}\nThis is for Alfon's Personal Learning Journey of Authentication. Verification Link: ${host}/verify/?k=${signedVerification}`,
     })
-    console.log(data)
 
   } catch (error) {
 
@@ -107,7 +103,7 @@ export async function sendEmailVerification(username: string, email: string) {
   }
 }
 export async function verifyVerificationKey(key: string) {
-  
+
 }
 
 /**
@@ -119,7 +115,7 @@ export const auth = cache(async () => {
     return {
       errorMsg: JSON.stringify("Auth Cookie Not Found")
     }
-  
+
   try {
     const session = await userJWT.decode(rawCookie)
     return {

@@ -1,5 +1,5 @@
 import { Input } from "@/component/input"
-import { returnSuccessMessage, returnErrorMessage, returnUnknownError, redirect } from "@/lib/action"
+import { returnSuccessMessage, returnErrorMessage, returnUnknownError, redirect } from "@/lib/error"
 import { authCookie, login } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
 
@@ -65,39 +65,10 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
         <br />
         <br />
 
-        <button type="submit">
+        <a data-primary href="/login/passwordless">
           Login without Password
-        </button>
+        </a>
       </form >
     </>
-  )
-}
-
-
-function LoginButton() {
-  return (
-    <button type="submit" formAction={
-      async (formData) => {
-        "use server"
-
-        const input = loginForm.validate(formData)
-        if (!input.ok)
-          returnErrorMessage("Invalid input")
-
-        const res = await login(input.usr, input.pwd)
-        switch (res) {
-          case "Unknown Server Error":
-            returnUnknownError()
-          case "User not found":
-          case "Wrong password":
-            returnErrorMessage("Invalid credentials")
-        }
-
-        authCookie.set(res.jwt)
-        redirect('/', 'success=Successfuly logged in')
-      }
-    } >
-      Login
-    </button>
   )
 }

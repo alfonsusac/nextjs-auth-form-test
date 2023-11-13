@@ -1,5 +1,5 @@
 import { auth, authCookie, userJWT, verificationJWT } from "@/api/authentication"
-import { Error, redirect } from "@/lib/action"
+import { Error, redirect } from "@/lib/error"
 import { UserVerification } from "@/model/user"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { NextRequest } from "next/server"
@@ -16,7 +16,11 @@ export async function GET(request: NextRequest) {
     const key = jwtpayload.verification
     if (!key) throw "the key is undefined"
 
-    await UserVerification.verifyKey(key)
+    await UserVerification.verifyKey(key).catch(
+      error => {
+        
+      }
+    )
 
     const { session } = await auth()
     if (!session) redirect('/login', 'success=Email Verified! Please Login')

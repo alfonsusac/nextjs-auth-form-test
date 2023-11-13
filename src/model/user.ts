@@ -6,12 +6,21 @@ export namespace User {
 
   // Used in:
   // - register user
-  export const create = cache(async (
+  export const create = cache(async ({username, email, provider, password}:{
     username: string,
     email: string,
-    password: string
+    provider: "password" | "magiclink"
+    password?: string
+  }
   ) => {
-    return await prisma.user.create({ data: { username, email, password } })
+    if (provider === "password") {
+      if (!password)
+        throw new Error("Password needs to be provide if using password provider")
+
+      return await prisma.user.create({ data: { username, email, provider, password: {create:{value: password}} } })
+    } else {
+      return await prisma.user.create({ data: { username, email, provider } })
+    }
   })
 
   // Used in:
@@ -29,6 +38,16 @@ export namespace User {
   ) => {
     await prisma.userVerification.delete({ where: { username } })
     return await prisma.user.delete({ where: { username, email } })
+  })
+}
+
+export namespace Password{
+  // Used in:
+  // - login
+  export const find = cache(async (
+    username: string
+  ) => {
+    return await prisma.userPassword.findUnique({ where: { username }, include: { user: { include: {verification: {}}} } })
   })
 }
 
@@ -64,6 +83,9 @@ export namespace UserVerification {
       update: {
         expiry: emailVerificationExpiryDate()
       }
+    }).catch(error => {
+      console.log("Error upserting user verification")
+      console.log(error)
     })
   })
 }
