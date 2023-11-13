@@ -2,8 +2,7 @@ import { Input } from "@/component/input"
 import { returnSuccessMessage, returnErrorMessage, returnUnknownError, redirect } from "@/lib/error"
 import { authCookie, login } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
-import { resend } from "@/lib/email"
-
+import { Email } from "@/lib/email"
 
 
 const passwordlessLoginForm = createForm({
@@ -36,9 +35,15 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
             if (!input.ok)
               returnErrorMessage("Invalid input")
 
+            
+            
             const res = await (async () => {
               
-              await resend.emails.send
+              await Email.verifyViaEmail({
+                recipient: input.eml,
+                subject: "Login via Magic Link",
+                text: `Please click the link to login to the application: ${}. Do not share this link to anyone!`
+              })
 
 
             })()

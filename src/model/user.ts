@@ -83,9 +83,6 @@ export namespace UserVerification {
       update: {
         expiry: emailVerificationExpiryDate()
       }
-    }).catch(error => {
-      console.log("Error upserting user verification")
-      console.log(error)
     })
   })
 }

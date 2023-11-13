@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { Request } from "./referrer"
 import * as Navigation from "next/navigation"
 
@@ -22,8 +23,11 @@ export namespace Response {
   }
 
 }
-
-export function redirect(path: string | undefined, query?: string ):never {
+/**
+ *  Redirections
+ */
+// ---------------------
+export function redirect(path: string | undefined, query?: string): never {
   console.log("Redirecting to: " + path)
   Navigation.redirect(`${path}${query ? `?${query}` : ''}`)
 }
@@ -43,3 +47,14 @@ export function returnUnknownError(): never {
   returnErrorMessage("Unknown server error")
 }
 
+/**
+ *  Graceful Error Handling
+ */
+// ---------------------
+export function action<CachedFunction extends Function>
+  (cb: CachedFunction): CachedFunction {
+
+  return () => cb()
+}
+
+cache()
