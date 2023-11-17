@@ -1,4 +1,5 @@
 import { Cookie, ReadOnlyCookie } from "../cookies"
+import { ClientError } from "../error"
 import { ValidatorOptions } from "./fieldBuilder"
 import { Field, ValidationError } from "./validator"
 
@@ -63,13 +64,22 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
     // - for each field:
     //   - return string if key is not file
     //   - return file if key is file
-    validate: <T extends boolean | undefined = undefined>(formData: FormData, checkAll?: T) => (
-      ({ ok: false, error: T extends true ? ValidationError[] : ValidationError } |
-        ({ ok: true } & { [key in keyof FormShape]:
+    validate: <CheckAll extends boolean | undefined = undefined>(formData: FormData, checkAll?: CheckAll) => (
+      (
+        CheckAll extends true ? {
+          [key in keyof FormShape]:
           FormShape[key]['required'] extends {} ?
           FormShape[key]["file"] extends {} ? File : string :
           FormShape[key]["file"] extends {} ? File : string | undefined
-        }))
+        } & {
+          error: ValidationError[]
+        } : {
+          [key in keyof FormShape]:
+          FormShape[key]['required'] extends {} ?
+          FormShape[key]["file"] extends {} ? File : string :
+          FormShape[key]["file"] extends {} ? File : string | undefined
+        }
+      )
     )
 
     // To be used to provide default values.
@@ -101,10 +111,7 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
           // If it breaks validation rules then return
           if (validator.fn(fieldValue)) {
             if (!checkAll)
-              return {
-                ok: false,
-                error: { field, type: validator.type } as any
-              }
+              throw new ClientError("Invalid input", `Field ${field} is invalid`)
             else
               errors.push({ field, type: validator.type })
           }
@@ -117,14 +124,12 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
       // Else, if it has any error then return later
       if (checkAll && errors.length > 0)
         return {
-          ok: false,
           error: errors as ValidationError[]
         }
       else
         return {
-          ok: true,
           ...fieldValues as { [key in keyof FormShape]: FormShape[key]["file"] extends {} ? File : string },
-        }
+        } as any
     },
     defaultValues: defaultFieldValueReadOnlyCookies
   }

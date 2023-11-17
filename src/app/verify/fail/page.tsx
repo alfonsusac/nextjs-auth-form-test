@@ -1,8 +1,9 @@
-import { auth, sendEmailVerification } from "@/api/authentication"
+import { getCurrentUser } from "@/api/authentication"
+import { sendEmailVerification } from "@/api/verification"
 import { redirect } from "@/lib/error"
 
 export default async function Page() {
-  const { session } = await auth()
+  const session = await getCurrentUser()
   if(!session) redirect('/login')
 
   return (
@@ -12,11 +13,11 @@ export default async function Page() {
         <button type="submit" formAction={
           async () => {
             "use server"
-            const { session } = await auth()
+            const session = await getCurrentUser()
             if (!session)
               redirect('/', 'error=Not Authenticated. Please log in again.')
             
-            const data = await sendEmailVerification(session.username, session.email)
+            await sendEmailVerification(session.username, session.email)
             redirect('/', 'success=Successful! Your email is verified.')
           }
         }>

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -16,6 +15,7 @@ model User {
   provider     String // "password" | "magiclink"
   password     UserPassword?
   verification UserVerification?
+  created_at   DateTime          @default(now())
 }
 
 model UserPassword {
@@ -25,9 +25,16 @@ model UserPassword {
 }
 
 model UserVerification {
-  id       String   @id @default(uuid())
-  user     User     @relation(fields: [username], references: [username])
-  username String   @unique
-  verified Boolean  @default(false)
-  expiry   DateTime
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [username], references: [username])
+  username    String    @unique
+  verified    Boolean   @default(false)
+  verified_at DateTime?
+  expiry      DateTime
+}
+
+model VerificationToken {
+  id      String   @id @default(uuid())
+  purpose String
+  expiry  DateTime
 }

@@ -8,6 +8,8 @@ export namespace Email {
     subject: string,
     text: string,
   }) {
+    console.log("Sending Email Verification to Recipient")
+
     return await resend.emails.send({
       from: "Verification <verification@alfon.dev>",
       to: input.recipient,

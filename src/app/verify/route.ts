@@ -1,46 +1,33 @@
-import { auth, authCookie, userJWT, verificationJWT } from "@/api/authentication"
-import { Error, redirect } from "@/lib/error"
-import { UserVerification } from "@/model/user"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import { getCurrentUser, UserJWTCookie } from "@/api/authentication"
+import { InvalidVerificationError, verifyEmailVerification } from "@/api/verification"
+import { redirect } from "@/lib/error"
 import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest) {
+
+  const theSearchParam = request.nextUrl.searchParams.get('k')
+  if (!theSearchParam) redirect('/')
+
   try {
 
-    const theSearchParam = request.nextUrl.searchParams.get('k')
-    if (!theSearchParam) throw "the search param is empty"
+    await verifyEmailVerification(theSearchParam)
 
-    const jwtpayload = await verificationJWT.decode(theSearchParam)
-    if (!jwtpayload) throw "the jwt payload is null"
-
-    const key = jwtpayload.verification
-    if (!key) throw "the key is undefined"
-
-    await UserVerification.verifyKey(key).catch(
-      error => {
-        
-      }
-    )
-
-    const { session } = await auth()
+    const session = await getCurrentUser()
     if (!session) redirect('/login', 'success=Email Verified! Please Login')
 
-    authCookie.set(await userJWT.encode({ ...session, verified: true }))
+    await UserJWTCookie.encodeAndSetCookie({ ...session, verified: true })
 
     redirect('/', 'success=Email Successfully Verified')
 
-  } catch (error) {
-    Error.handleActionError(error)
 
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.log("Prisma Error")
-      console.log(error)
+  } catch (error: any) {
+    if (error.message === "NEXT_REDIRECT") throw error
+
+    if (error instanceof InvalidVerificationError)
       redirect('/verify/fail', 'error=Verification no longer valid. Please try again.')
-    }
 
     console.log(error)
     redirect('/verify/fail', 'error=Unknown server error')
-
-
   }
+  
 }

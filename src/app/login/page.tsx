@@ -1,18 +1,19 @@
 import { Input } from "@/component/input"
-import { returnSuccessMessage, returnErrorMessage, returnUnknownError, redirect } from "@/lib/error"
-import { authCookie, login } from "@/api/authentication"
+import { redirect, handleActionError } from "@/lib/error"
+import { login } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
+import { SearchParamStateCallout } from "@/component/searchParams"
 
 
 
 const loginForm = createForm({
-  'usr': {
+  'username': {
     label: "Username",
     required: "Username is required!",
     text: "Username has to be a text!",
     persistValue: {}
   },
-  'pwd': {
+  'password': {
     label: "Password",
     required: "Password is required!",
     password: "Password has to be a text!",
@@ -24,48 +25,41 @@ const loginForm = createForm({
 export default function LoginPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   return (
     <>
-      
+
       <h2>Login</h2>
       <form>
-        { searchParams.error &&
-          <div data-callout-error>{ searchParams.error }</div>
-        }
-        <Input { ...loginForm.fields.usr.attributes } label={ loginForm.fields.usr.label } defaultValue={ loginForm.defaultValues.usr.get() } />
-        <Input { ...loginForm.fields.pwd.attributes } label={ loginForm.fields.pwd.label } />
-        
+        <SearchParamStateCallout searchParams={ searchParams } />
+        <Input { ...loginForm.fields.username.attributes } label={ loginForm.fields.username.label } defaultValue={ loginForm.defaultValues.username.get() } />
+        <Input { ...loginForm.fields.password.attributes } label={ loginForm.fields.password.label } />
         <br />
-        
         <button type="submit" formAction={
           async (formData) => {
+
             "use server"
+            try {
 
-            const input = loginForm.validate(formData)
-            if (!input.ok)
-              returnErrorMessage("Invalid input")
+              // Validate the input of the login form
+              const input = loginForm.validate(formData)
+              
+              // Logs user in
+              await login(input)
 
-            const res = await login(input.usr, input.pwd)
-            switch (res) {
-              case "Unknown Server Error":
-                returnUnknownError()
-              case "User not found":
-              case "Wrong password":
-                returnErrorMessage("Invalid credentials")
+              // Redirect to home page with success message
+              redirect('/', 'success=Successfuly logged in')
+
             }
+            catch (error) { handleActionError(error) }
 
-            authCookie.set(res.jwt)
-            redirect('/', 'success=Successfuly logged in')
           }
         } >
           Login
         </button>
         <a href="/register" className="button">register</a>
         <a href="/forgot" className="button">forgot password</a>
-
         <br />
         <br />
         <br />
-
-        <a data-primary href="/login/passwordless">
+        <a data-primary href="/passwordless">
           Login without Password
         </a>
       </form >

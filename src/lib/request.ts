@@ -21,9 +21,6 @@ export namespace Request{
 
     return `${protocol as protocol}://${domain}`
   }
-
-
-
   export function getReferer() {
     const referer = headers().get('referer')
     if (!referer) throw new Error('Referrer header not found!')
@@ -33,6 +30,10 @@ export namespace Request{
     return new URL(Request.getReferer())
   }
   export function getSearchParam() {
-    return new URLSearchParams(Request.getURL().searchParams)
+    try {
+      return new URLSearchParams(Request.getURL().searchParams)
+    } catch (error) {
+      return new URLSearchParams()      
+    }
   }
 }
