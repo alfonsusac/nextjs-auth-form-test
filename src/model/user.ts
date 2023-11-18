@@ -23,7 +23,7 @@ export namespace User {
         return await prisma.user.create({ data: { username, email, provider } })
       if (provider === "password")
         return await prisma.user.create({ data: { username, email, provider, password: { create: { value: password as any } } } })
-    
+
     } catch (error: any) {
       handleUniqueConstraintError(error, "email", "Email is already taken")
       handleUniqueConstraintError(error, "username", "Username is already taken")
@@ -52,11 +52,17 @@ export namespace User {
   export const remove = cache(async (
     username: string, email: string //email and username has to match
   ) => {
-    await prisma.userPassword.delete({ where: { username } })
+
+    try {
+      await prisma.userPassword.delete({ where: { username } })
+    } catch (error) { }
+
     try {
       await prisma.userVerification.delete({ where: { username } })
-    } catch (error) {}
+    } catch (error) { }
+
     return await prisma.user.delete({ where: { username, email } })
+
   })
 }
 
@@ -68,6 +74,34 @@ export namespace Password {
   ) => {
     return await prisma.userPassword.findUnique({ where: { username }, include: { user: { include: { verification: {} } } } })
   })
+
+  export const update = cache(async (
+    username: string,
+    oldPasswordHash: string,
+    newPasswordHash: string
+  ) => {
+    return await prisma.userPassword.update({
+      where: {
+        username,
+        value: oldPasswordHash
+      },
+      data: {
+        value: newPasswordHash
+      }
+    })
+  })
+
+  export const forceUpdate = cache(async(
+    username: string,
+    newPasswordHash: string
+  ) => {
+    return await prisma.userPassword.update({
+      where: { username },
+      data: {
+        value: newPasswordHash
+      }
+    })
+  }) 
 }
 
 export namespace UserVerification {

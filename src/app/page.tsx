@@ -1,7 +1,7 @@
-import { redirectToHomeIfNotAuthenticated, getCurrentUser, logout } from "@/api/authentication"
+import { getUserAndRedirectToHomeIfNotAuthenticated, getCurrentUser, logout } from "@/api/authentication"
 import { deleteUser } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
-import { IfNotLoggedIn, IfLoggedIn, IfNotVerified } from "@/component/authentication"
+import { IfNotLoggedIn, IfLoggedIn, IfNotVerified, IfVerified } from "@/component/authentication"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { handleActionError, redirect } from "@/lib/error"
 
@@ -16,8 +16,8 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
       <h2> Welcome! </h2>
       <span>
         { session?.username ? `Logged in as: ${session?.username}` : `Not Logged in` }
-      </span><br />
-
+      </span>
+      <br />
       <IfNotLoggedIn>
         <form>
           <a href="/login" data-primary>Log in</a>
@@ -30,7 +30,7 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
             <button type="submit" formAction={ async () => {
 
               "use server"
-              const session = await redirectToHomeIfNotAuthenticated()
+              const session = await getUserAndRedirectToHomeIfNotAuthenticated()
               await sendEmailVerification(session.username, session.email)
               redirect('/', 'success=Successful! Your email is verified.')
 
@@ -39,24 +39,28 @@ export default async function HomePage({ searchParams }: { searchParams: { [key:
               Verify Email
             </button>
           </IfNotVerified>
+          <IfVerified>
+            <a href="/changepassword">
+              Change Password
+            </a>
+          </IfVerified>
           <button formAction={ async () => {
 
             "use server"
-
             await logout()
-
             redirect('', `success=Successfully logged out`)
+            
           }
           }>
             Log out
           </button>
-
           <button formAction={ async () => { "use server"; try { await deleteUser() } catch (error) { handleActionError(error) } } }>
             Delete Account
           </button>
-
         </form>
-      </IfLoggedIn><br /><br />
+      </IfLoggedIn>
+      <br />
+      <br />
     </article>
   )
 }

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     await verifyEmailVerification(theSearchParam)
 
     const session = await getCurrentUser()
-    if (!session) redirect('/login', 'success=Email Verified! Please Login')
+    if (!session) redirect('/login', 'error=Not Authenticated')
 
     await UserJWTCookie.encodeAndSetCookie({ ...session, verified: true })
 

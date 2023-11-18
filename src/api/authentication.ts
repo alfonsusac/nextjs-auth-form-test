@@ -4,6 +4,7 @@ import { Password, User } from "@/model/user"
 import { cache } from "react"
 import { Cookie } from "@/lib/cookies"
 import { ClientError, InvalidCredentialsError, redirect } from "@/lib/error"
+import { EmailVerification } from "./verification"
 
 
 /** ========================================================================================
@@ -87,9 +88,6 @@ export async function login({ username, password }: { username: string, password
   })
 
 }
-
-
-
 /**
  *  Logs user out
  */
@@ -98,6 +96,21 @@ export async function logout() {
   return
 }
 
+export const forgotPasswordVerification = new EmailVerification(
+  "forgotpassword",
+  "1d",
+  "One-time link to reset password",
+  (h, t) => `Reset your password here: ${h}/forgotpassword/reset?k=${t}`
+)
+
+export async function forgotPassword({ email }: { email: string }) {
+
+  const user = await User.findEmail(email)
+  if (!user) throw new ClientError("Email not found!")
+
+  await forgotPasswordVerification.send(email)
+
+}
 
 
 /**
@@ -112,7 +125,7 @@ export const getCurrentUser = cache(async () => {
   return payload
 })
 
-export const redirectToHomeIfNotAuthenticated = cache(async () => {
+export const getUserAndRedirectToHomeIfNotAuthenticated = cache(async () => {
   const session = await getCurrentUser()
   if (!session) redirect('/', 'error=Not Authenticated. Please log in again.')
   if (!session.username) redirect('/passwordless/register')

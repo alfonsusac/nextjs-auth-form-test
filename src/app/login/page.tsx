@@ -55,7 +55,7 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
           Login
         </button>
         <a href="/register" className="button">register</a>
-        <a href="/forgot" className="button">forgot password</a>
+        <a href="/forgotpassword" className="button">forgot password</a>
         <br />
         <br />
         <br />

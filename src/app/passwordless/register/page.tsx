@@ -1,4 +1,4 @@
-import { getCurrentUser, redirectToHomeIfNotAuthenticated } from "@/api/authentication"
+import { getCurrentUser, getUserAndRedirectToHomeIfNotAuthenticated } from "@/api/authentication"
 import { registerPasswordless } from "@/api/passwordless"
 import { Input } from "@/component/input"
 import { handleActionError, redirect } from "@/lib/error"
