@@ -1,5 +1,5 @@
-import { forgotPasswordVerification, getCurrentUser, UserJWTCookie, verifyForgotPassword } from "@/api/authentication"
-import { InvalidVerificationError, verifyEmailVerification } from "@/api/verification"
+import { forgotPasswordVerification } from "@/api/authentication"
+import { InvalidVerificationError } from "@/api/verification"
 import { ClientError, redirect } from "@/lib/error"
 import { User } from "@/model/user"
 import { NextRequest } from "next/server"

@@ -1,6 +1,6 @@
 import { Cryptography } from "@/lib/crypto"
 import { Password } from "@/model/user"
-import { userJWT } from "../authentication"
+import { UserJWTCookie } from "../authentication"
 
 export namespace Auth {
   
@@ -12,7 +12,7 @@ export namespace Auth {
     if (!await Cryptography.verify(storedpassword.value, password))
       return "Wrong password"
 
-    const jwt = await userJWT.encode({
+    const jwt = await UserJWTCookie.encodeAndSetCookie({
       username: storedpassword.user.username,
       email: storedpassword.user.email,
       verified: storedpassword.user.verification?.verified ?? false,
