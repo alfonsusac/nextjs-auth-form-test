@@ -35,6 +35,5 @@ model UserVerification {
 
 model VerificationToken {
   id      String   @id @default(uuid())
-  purpose String
   expiry  DateTime
 }

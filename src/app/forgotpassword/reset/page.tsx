@@ -1,45 +1,73 @@
-import { forgotPasswordVerification } from "@/api/authentication"
-import { InvalidVerificationError } from "@/api/verification"
-import { ClientError, redirect } from "@/lib/error"
+import { Verifications, sendForgotPasswordEmail, resetPassword } from "@/api/authentication"
+import { DecodingError, EmailVerification, InvalidSearchParam } from "@/api/verification"
+import { Input } from "@/component/input"
+import { SearchParamStateCallout } from "@/component/searchParams"
+import { ClientError, handleActionError, redirect } from "@/lib/error"
+import { JWTHandler } from "@/lib/jwt"
+import { createForm } from "@/lib/validations/formData"
 import { Password, User } from "@/model/user"
 
+const form = createForm({
+  'password': {
+    label: 'New Password',
+    required: "Please insert password",
+    password: "Please insert valid password",
+  },
+  "hiddenToken": {
+    label: "",
+    required: ""
+  }
+})
+
+const resetPasswordToken = new JWTHandler<{
+  username: string
+}>("1h")
+
+export const dynamic = 'force-dynamic'
 export default async function ResetPassword({ searchParams }: any) {
-  
-  const jwtFromSearchParam = searchParams.k
-  if (!jwtFromSearchParam) redirect('/forgotpassword')
 
   try {
-
-    const { payload, verified } = await forgotPasswordVerification.verify(jwtFromSearchParam)
-
-    if (!verified)
-      redirect('/forgotpassword', 'error=Verification failed! Please try again.')
-
-    const user = await User.findEmail(payload.email)
-
-    if (!user) {
-      throw new ClientError("User Not Found. Even after verifying their email")
-    }
+    const data = await Verifications.forgotPassword.verify(searchParams.purpose, searchParams.key)
+    const token = await resetPasswordToken.encode({ username: data.username })
 
     return (
       <>
         <h2>Reset Password</h2>
         <form>
-          
+          <SearchParamStateCallout searchParams={ searchParams } />
+          <input name="hiddenToken" value={ token } hidden readOnly/>
+          <Input { ...form.fields.password.attributes } label={ form.fields.password.label } />
+          <br />
+          <button formAction={
+            async (formData) => {
+              "use server"
+              try {
+                const { password, hiddenToken } = form.validate(formData)
+                const payload = await resetPasswordToken.decode(hiddenToken)
+                await resetPassword({
+                  username: payload.username,
+                  newPassword: password
+                })
+                redirect('/', 'success=Password successfully resetted!')
+              }
+              catch (error: any) { handleActionError(error) }
+            }
+          }>
+            Reset password
+          </button>
         </form>
       </>
     )
 
 
-  } catch (error: any) {
-    if (error.message === "NEXT_REDIRECT") throw error
-
-    if (error instanceof InvalidVerificationError)
-      redirect('/verify/fail', 'error=Verification no longer valid. Please try again.')
-
+  } catch (error) {
+    if (error instanceof InvalidSearchParam) {
+      redirect('/')
+    }
+    console.log("Error verifying incoming request")
     console.log(error)
-    redirect('/verify/fail', 'error=Unknown server error')
+    redirect('/forgotpassword', 'error=Verification Failed. Please try again')
   }
 
-
 }
+

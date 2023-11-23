@@ -3,7 +3,7 @@ import { JWTCookieHandler } from "@/lib/jwt"
 import { Password, User } from "@/model/user"
 import { cache } from "react"
 import { Cookie } from "@/lib/cookies"
-import { ClientError, InvalidCredentialsError, redirect } from "@/lib/error"
+import { ClientError, InvalidCredentialClientError, redirect } from "@/lib/error"
 import { EmailVerification } from "./verification"
 
 
@@ -49,20 +49,17 @@ export const UserJWTCookie = new JWTCookieHandler
 */
 /**
  *  Register User
+ *  - hashes inputted password
+ *  - and store the new user detail to database
  */
 export async function register({ username, email, password }: { username: string, email: string, password: string }) {
-
-  // Hash the inputted password
   const hashedPwd = await Cryptography.hash(password)
-
-  // Store the new user detail to the database
   return await User.create({
     username,
     email,
     provider: "password",
     password: hashedPwd
   })
-
 }
 
 
@@ -73,11 +70,11 @@ export async function login({ username, password }: { username: string, password
 
   // Find stored password in the database based on username
   const storedpassword = await Password.find(username)
-  if (!storedpassword) throw new InvalidCredentialsError("User not found")
+  if (!storedpassword) throw new InvalidCredentialClientError("User not found")
 
   // Verify that the inputted password same as stored password
   if (!await Cryptography.verify(storedpassword.value, password))
-    throw new InvalidCredentialsError("Password does not match")
+    throw new InvalidCredentialClientError("Password does not match")
 
   // Create JWT and set Cookie of the current session
   const { user } = storedpassword
@@ -96,20 +93,46 @@ export async function logout() {
   return
 }
 
-export const forgotPasswordVerification = new EmailVerification(
-  "forgotpassword",
-  "1d",
-  "One-time link to reset password",
-  (h, t) => `Reset your password here: ${h}/forgotpassword/reset?k=${t}`
-)
+/**
+ *  Forgot Password
+ */
 
-export async function forgotPassword({ email }: { email: string }) {
+export namespace Verifications{
+  export const forgotPassword = new EmailVerification<{
+    username: string
+  }>("forgotpassword", "1d",
+    "One-time link to reset password",
+    (url) => `Reset your password here: ${url}`,
+    "/forgotpassword/reset",
+  )
+}
+
+export async function sendForgotPasswordEmail({ email }: { email: string }) {
 
   const user = await User.findEmail(email)
   if (!user) throw new ClientError("Email not found!")
 
-  await forgotPasswordVerification.send(email)
+  if (user.provider === "magiclink")
+    throw new ClientError("This user is using passwordless. Login with passwordless instead!")
 
+  await Verifications.forgotPassword.send(email, {
+    username: user.username,
+  })
+
+}
+
+export async function resetPassword({ username, newPassword }: {
+  username: string,
+  newPassword: string
+}) {
+  // Hash the inputted password
+  const hashedPwd = await Cryptography.hash(newPassword)
+
+  // Store the new user detail to the database
+  return await Password.forceUpdate({
+    username,
+    newPasswordHash: hashedPwd
+  })
 }
 
 

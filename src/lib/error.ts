@@ -21,15 +21,13 @@ export function returnSuccessMessage(msg: string): never {
   const searchParams = Request.getSearchParam()
   searchParams.set("success", msg)
   searchParams.delete("error")
-  Navigation.redirect('?' + searchParams.toString())
+  redirect('', searchParams.toString())
 }
 export function returnErrorMessage(error: string): never {
-  console.log("Returning Error Message")
-  
   const searchParams = Request.getSearchParam()
   searchParams.set("error", error)
   searchParams.delete("success")
-  Navigation.redirect('?' + searchParams.toString())
+  redirect('', searchParams.toString())
 }
 export function returnUnknownError(): never {
   console.log("Returning Unknown Error Message")
@@ -61,16 +59,24 @@ export function handleUniqueConstraintError(error: any, field: string, errorMess
  */
 export function handleActionError(error: any) {
 
-  console.log("Handling Errors/Redirects")
+  if (error.message === "NEXT_REDIRECT") throw error
 
-  if (error.message === "NEXT_REDIRECT") {
-    throw error
-  } else if (error instanceof ClientError) {
+  if (error instanceof ClientError) {
     returnErrorMessage(error.clientMessage)
-  } else {
-    returnUnknownError()
   }
+  
+  console.log("Unknown Server Error Occurred")
+  console.log(error)
+
+  returnUnknownError()
 }
+
+
+
+
+
+
+
 
 export class DeveloperError extends Error {
   constructor(msg: string) {
@@ -90,18 +96,16 @@ export class ClientError extends Error {
   }
 }
 
-export class InvalidCredentialsError extends ClientError{
+export class InvalidCredentialClientError extends ClientError {
   constructor(servermsg: string) {
     super("Invalid Credentials", servermsg)
-    Object.setPrototypeOf(this, InvalidCredentialsError.prototype)
+    Object.setPrototypeOf(this, InvalidCredentialClientError.prototype)
   }
 }
 
-export class BadRequestError extends ClientError{
+export class BadRequestClientError extends ClientError {
   constructor(servermsg: string) {
     super("Bad Request", servermsg)
-    Object.setPrototypeOf(this, BadRequestError.prototype)
+    Object.setPrototypeOf(this, BadRequestClientError.prototype)
   }
 }
-
-

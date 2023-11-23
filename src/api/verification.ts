@@ -2,9 +2,11 @@ import { JWTHandler } from "@/lib/jwt"
 import { UserVerification } from "@/model/user"
 import { Request } from "@/lib/request"
 import { Email } from "@/lib/email"
-import { ClientError } from "@/lib/error"
-import { VerificationToken } from "@/model/verification"
+import { ClientError, redirect } from "@/lib/error"
 import ms, { StringValue } from "@/lib/ms"
+import { DB } from "@/model/verification"
+import { logger } from "@/lib/logger"
+import { NextRequest, NextResponse } from "next/server"
 
 /** ========================================================================================
 *
@@ -56,11 +58,11 @@ export async function verifyEmailVerification(jwt: string) {
 
   // Reveive the jwt from the search params
   const payload = await verificationJWT.decode(jwt)
-  if (!payload) throw new InvalidVerificationError("The JWT Payload is Null")
+  if (!payload) throw new DecodingError("The JWT Payload is Null")
 
   // Validate the jwt by checking if it has required property
   const key = payload?.verification
-  if (!key) throw new InvalidVerificationError("The key inside jwt payload is undefined")
+  if (!key) throw new DecodingError("The key inside jwt payload is undefined")
 
   // Verify with the database by trying to delete them
   return UserVerification.verifyKey(key)
@@ -74,13 +76,19 @@ export async function verifyEmailVerification(jwt: string) {
 * ========================================================================================
 */
 
-export class InvalidVerificationError extends ClientError {
-
+export class DecodingError extends ClientError {
   constructor(servermsg: string) {
     super("Invalid Verification Token", servermsg)
-    Object.setPrototypeOf(this, InvalidVerificationError.prototype)
   }
 }
+
+export class InvalidSearchParam extends ClientError {
+  constructor(msg: string) {
+    super(msg)
+    console.log("Invalid Search Params: " + msg)
+  }
+}
+export class VerificationError extends ClientError { }
 
 /** ========================================================================================
 *
@@ -89,56 +97,88 @@ export class InvalidVerificationError extends ClientError {
 * ========================================================================================
 */
 
-export class EmailVerification<Context extends { [key: string]: string } | undefined> {
+const log = logger("Email Verification ",)
+
+type VerificationJWTPayload<Data> = DefaultVerificationJWTPayload & {
+  data?: Data
+}
+type DefaultVerificationJWTPayload = {
+  verification: string,
+  purpose: string,
+  data: { [key: string]: string } | undefined
+}
+
+export class EmailVerification<
+  Data extends { [key: string]: string } | undefined = undefined,
+  Context extends { [key: string]: string } | undefined = undefined,
+> {
+
+  private readonly verificationJWT
+    = new JWTHandler<
+      VerificationJWTPayload<Data>
+    >(this.duration)
+
   constructor(
-    private readonly purpose: string,
+    readonly purpose: string,
     private readonly duration: StringValue,
     private readonly emailSubject: string,
-    private readonly text: (host: string, token: string, context?: Context) => string
+
+    private readonly text:
+      (url: string, context?: Context) => string,
+
+    readonly redirectURL: string,
+  ) { }
+
+  /**
+   *  Sends Email Verifiation
+   *   
+   */
+  async send(
+    email: string,
+    data: Data,
+    emailContext?: Context,
   ) {
 
-  }
-
-  async send(email: string): Promise<void>
-  async send(email: string, context?: Context) {
-    console.log("Sending Email Verification")
-
-    const token = await VerificationToken.create({
+    log("Sending Email Verification")
+    const token = await DB.VerificationToken.create({
       purpose: this.purpose,
       expiryDurationMilisecond: ms(this.duration)
     })
 
-    const signedToken = await passwordlessVerificationJWT.encode({ verification: token.id, email })
+    log("Token Stored")
+    const signedToken = await this.verificationJWT.encode(
+      {
+        verification: token.id,
+        purpose: this.purpose,
+        data,
+      }
+    )
+    log("Token Encoded")
+
+    const verificationUrl = new URL(Request.getServerBaseURL() + this.redirectURL)
+    verificationUrl.searchParams.set('purpose', this.purpose)
+    verificationUrl.searchParams.set('key', signedToken)
 
     const res = await Email.verifyViaEmail({
       recipient: email,
       subject: this.emailSubject,
-      text: this.text(Request.getServerBaseURL(), signedToken, context),
+      text: this.text(verificationUrl.toString(), emailContext),
     })
     console.log(res)
-
+    log("Token Sent")
   }
 
-  async verify(jwt: string) {
-    console.log("Verifying JWT")
-    
-    const payload = await passwordlessVerificationJWT.decode(jwt)
-    if (!payload) throw new InvalidVerificationError("The JWT Payload is Null")
-    
-    console.log("Payload Decoded")
-    
-    const key = payload?.verification
-    if (!key) throw new InvalidVerificationError("The key inside jwt payload is undefined")
-    
-    try {
-      await VerificationToken.verify({ id: key })
-      console.log("Verification key Verified")
-      return { payload, verified: true }
-    } catch (error) {
-      console.log("Verification key Faield to be Verified")
-      return { payload, verified: false }
-    }
+  async verify(purpose: string, key: string) {
 
+    if (!purpose) throw new InvalidSearchParam("Purpose not provided")
+    if (!key) throw new InvalidSearchParam("Key not provided")
 
+    const payload = await JWTHandler.decode<VerificationJWTPayload<Data>>(key)
+
+    const payloadKey = payload.verification
+
+    await DB.VerificationToken.verify({ id: payloadKey })
+
+    return payload.data as Data
   }
 }

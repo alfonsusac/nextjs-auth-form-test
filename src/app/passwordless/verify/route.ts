@@ -1,27 +1,21 @@
 import { UserJWTCookie } from "@/api/authentication"
-import { passwordlessVerify } from "@/api/passwordless"
+import { Verifications } from "@/api/passwordless"
 import { redirect } from "@/lib/error"
 import { User, UserVerification } from "@/model/user"
 import { NextRequest } from "next/server"
 
+export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   console.log("Verifying Token Link from Search Params...")
 
-  const jwtFromSearchParam = request.nextUrl.searchParams.get('k')
-  if (!jwtFromSearchParam) redirect('/passwordless')
-
   try {
-    const { payload, verified } = await passwordlessVerify(jwtFromSearchParam)
-
-    if (!verified)
-      redirect('/passwordless', 'error=Verification failed! Please try again.')
-
-    const user = await User.findEmail(payload.email)
+    const data = await Verifications.passwordlessVerification.verify(request.nextUrl.searchParams.get('purpose') ?? "", request.nextUrl.searchParams.get('key') ?? "")
+    const user = await User.findEmail(data.email)
 
     if (!user) {
       await UserJWTCookie.encodeAndSetCookie({
         username: "",
-        email: payload.email,
+        email: data.email,
         verified: true,
       })
       redirect('/passwordless/register')

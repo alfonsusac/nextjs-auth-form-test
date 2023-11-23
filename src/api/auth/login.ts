@@ -1,24 +1,30 @@
 import { Cryptography } from "@/lib/crypto"
 import { Password } from "@/model/user"
 import { UserJWTCookie } from "../authentication"
+import { InvalidCredentialClientError } from "@/lib/error"
 
 export namespace Auth {
-  
-  export async function login(username: string, password: string) {
 
+  export async function login({ username, password }: {
+    username: string,
+    password: string
+  }) {
+
+    // Find stored password in the database based on username
     const storedpassword = await Password.find(username)
-    if (!storedpassword) return "User not found"
+    if (!storedpassword) throw new InvalidCredentialClientError("User not found")
 
+    // Verify that the inputted password same as stored password
     if (!await Cryptography.verify(storedpassword.value, password))
-      return "Wrong password"
+      throw new InvalidCredentialClientError("Password does not match")
 
-    const jwt = await UserJWTCookie.encodeAndSetCookie({
-      username: storedpassword.user.username,
-      email: storedpassword.user.email,
-      verified: storedpassword.user.verification?.verified ?? false,
+    // Create JWT and set Cookie of the current session
+    const { user } = storedpassword
+    await UserJWTCookie.encodeAndSetCookie({
+      username: user.username,
+      email: user.email,
+      verified: user.verification?.verified ?? false,
     })
-
-    return { jwt }
 
   }
 }

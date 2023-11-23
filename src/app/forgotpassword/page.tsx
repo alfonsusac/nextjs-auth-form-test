@@ -1,4 +1,4 @@
-import { forgotPassword } from "@/api/authentication"
+import { sendForgotPasswordEmail } from "@/api/authentication"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { handleActionError, returnSuccessMessage } from "@/lib/error"
@@ -27,7 +27,7 @@ export default function ForgotPassword({ searchParams }: any) {
             "use server"
             try {
               const { email } = form.validate(formData)
-              await forgotPassword({ email })
+              await sendForgotPasswordEmail({ email })
               returnSuccessMessage('An email is sent to reset your password!')
             }
             catch (error: any) { handleActionError(error) }

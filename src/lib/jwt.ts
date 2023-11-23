@@ -1,4 +1,4 @@
-import { EncryptJWT, jwtDecrypt } from "jose"
+import { EncryptJWT, JWTPayload, jwtDecrypt } from "jose"
 import { Cryptography } from "./crypto"
 import { StringValue } from "@/../ms/dist"
 import { Cookie } from "./cookies"
@@ -67,11 +67,16 @@ export class JWTHandler<Payload extends {}> {
 
   async decode(jwt: string) {
 
-    if (!jwt) return null
     const encryptionSecret = await Cryptography.getEncryptionKey(encryptionSecretDefault)
     const { payload } = await jwtDecrypt<Payload>(jwt, encryptionSecret, { clockTolerance: 15 })
     return payload
 
+  }
+
+  static async decode<Payload extends JWTPayload = JWTPayload>(jwt: string) {
+    const encryptionSecret = await Cryptography.getEncryptionKey(encryptionSecretDefault)
+    const { payload } = await jwtDecrypt<Payload>(jwt, encryptionSecret, { clockTolerance: 15 })
+    return payload
   }
 
 }

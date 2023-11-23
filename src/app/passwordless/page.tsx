@@ -4,7 +4,7 @@ import { createForm } from "@/lib/validations/formData"
 import { passwordlessInitialize } from "@/api/passwordless"
 import { SearchParamStateCallout } from "@/component/searchParams"
 
-const passwordlessLoginForm = createForm({
+const form = createForm({
   'eml': {
     label: "Email",
     required: "Email is required",
@@ -16,21 +16,19 @@ const passwordlessLoginForm = createForm({
 
 export default function PasswordlessLoginPage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-  
-
   return (
     <>
       <h2>Login with Magic Link</h2>
       <form>
         <SearchParamStateCallout searchParams={ searchParams } />
-        <Input { ...passwordlessLoginForm.fields.eml.attributes } label={ passwordlessLoginForm.fields.eml.label } defaultValue={ passwordlessLoginForm.defaultValues.eml.get() } />
+        <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />
         <br />
         <button type="submit" formAction={
           async (formData) => {
             "use server"
             console.log("Submitted passwordless login page")
             try {
-              const { eml } = passwordlessLoginForm.validate(formData)
+              const { eml } = form.validate(formData)
               await passwordlessInitialize(eml)
               returnSuccessMessage('Verification Email Sent!\n Please check your email.')
             }

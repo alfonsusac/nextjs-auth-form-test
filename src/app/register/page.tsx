@@ -5,7 +5,7 @@ import { createForm } from "@/lib/validations/formData"
 import { sendEmailVerification } from "@/api/verification"
 import { SearchParamStateCallout } from "@/component/searchParams"
 
-export const registerForm = createForm({
+const form = createForm({
   'eml': {
     label: "Email",
     required: "Email is required",
@@ -31,9 +31,9 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
       <h2>Sign Up</h2>
       <form>
         <SearchParamStateCallout searchParams={ searchParams } />
-        <Input { ...registerForm.fields.eml.attributes } label={ registerForm.fields.eml.label } defaultValue={ registerForm.defaultValues.eml.get() } />
-        <Input { ...registerForm.fields.usr.attributes } label={ registerForm.fields.usr.label } defaultValue={ registerForm.defaultValues.usr.get() } />
-        <Input { ...registerForm.fields.pwd.attributes } label={ registerForm.fields.pwd.label } />
+        <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />
+        <Input { ...form.fields.usr.attributes } label={ form.fields.usr.label } defaultValue={ form.defaultValues.usr.get() } />
+        <Input { ...form.fields.pwd.attributes } label={ form.fields.pwd.label } />
         <br />
         <button
           type="submit"
@@ -43,7 +43,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
             try {
 
               // Validate the input
-              const { usr, eml, pwd } = registerForm.validate(formData)
+              const { usr, eml, pwd } = form.validate(formData)
 
               // Creates new user row in the database.
               await register({ username: usr, email: eml, password: pwd })

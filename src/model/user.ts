@@ -91,9 +91,10 @@ export namespace Password {
     })
   })
 
-  export const forceUpdate = cache(async(
+  export const forceUpdate = cache(async ({ username, newPasswordHash}:{
     username: string,
     newPasswordHash: string
+  }
   ) => {
     return await prisma.userPassword.update({
       where: { username },
