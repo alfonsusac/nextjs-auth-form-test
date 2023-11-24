@@ -48,8 +48,6 @@ export async function sendEmailVerification(username: string, email: string) {
   })
 
 }
-
-
 /**
  *  Verify Email Verification
  * 

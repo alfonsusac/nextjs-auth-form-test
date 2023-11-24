@@ -143,17 +143,28 @@ export async function resetPassword({ username, newPassword }: {
 /**
  *  Retrieves session from cookie.
  */
-export const getCurrentUser = cache(async () => {
+export function AuthGuard(p: {
+  
+}) {
+  
+}
+
+
+export const getCurrentSession = cache(async (opts?: {
+  onUnauthorized: () => void,
+  onUnverified: () => void,
+}) => {
   const payload = await UserJWTCookie.getCookieAndDecode()
   return payload
 })
 
 export const getUserAndRedirectToHomeIfNotAuthenticated = cache(async () => {
-  const session = await getCurrentUser()
+  const session = await getCurrentSession()
   if (!session) redirect('/', 'error=Not Authenticated. Please log in again.')
   if (!session.username) redirect('/passwordless/register')
   return session
 })
+
 
 /** ========================================================================================
 *
@@ -163,9 +174,8 @@ export const getUserAndRedirectToHomeIfNotAuthenticated = cache(async () => {
 */
 export class NotAuthenticated extends ClientError {
 
-  constructor(servermsg: string) {
-    super("Not Authenticated. Please Sign in to continue.", servermsg)
-    Object.setPrototypeOf(this, NotAuthenticated.prototype)
+  constructor() {
+    super("Not Authenticated. Please Sign in to continue.")
   }
 
 }

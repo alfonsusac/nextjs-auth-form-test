@@ -1,4 +1,4 @@
-import { getCurrentUser, UserJWTCookie } from "@/api/authentication"
+import { getCurrentSession, UserJWTCookie } from "@/api/authentication"
 import { DecodingError, verifyEmailVerification } from "@/api/verification"
 import { redirect } from "@/lib/error"
 import { NextRequest } from "next/server"
@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
   try {
     await verifyEmailVerification(theSearchParam)
 
-    const session = await getCurrentUser()
-    if (!session) redirect('/login', 'error=Not Authenticated')
+    const session = await getCurrentSession()
+    if (!session) redirect('/login', 'success=Email Verified! Please log in to continue.')
 
     await UserJWTCookie.encodeAndSetCookie({ ...session, verified: true })
     redirect('/', 'success=Email Successfully Verified')

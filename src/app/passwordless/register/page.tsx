@@ -1,4 +1,4 @@
-import { getCurrentUser, getUserAndRedirectToHomeIfNotAuthenticated } from "@/api/authentication"
+import { getCurrentSession, getUserAndRedirectToHomeIfNotAuthenticated } from "@/api/authentication"
 import { registerPasswordless } from "@/api/passwordless"
 import { Input } from "@/component/input"
 import { handleActionError, redirect } from "@/lib/error"
@@ -15,7 +15,7 @@ const passwordlessRegisterForm = createForm({
 
 export default async function PasswordlessRegisterPage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-  const session = await getCurrentUser()
+  const session = await getCurrentSession()
   if (!session) redirect('/', 'error=Not Authenticated. Please log in again.')
   if (session.username) redirect('/')
 
@@ -33,7 +33,7 @@ export default async function PasswordlessRegisterPage({ searchParams }: { searc
             const { username } = passwordlessRegisterForm.validate(formData)
             const email = formData.get('email')
   
-            const user = await getCurrentUser()
+            const user = await getCurrentSession()
             if (!user) redirect('/')
   
             if (email !== user.email) redirect('/passwordless', 'error=Session expired. Please try again')

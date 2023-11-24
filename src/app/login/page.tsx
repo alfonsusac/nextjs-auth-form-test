@@ -46,10 +46,11 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
         <a href="/register" className="button">register</a>
         <a href="/forgotpassword" className="button">forgot password</a>
         <br />
-        <br />
-        <br />
-        <a data-primary href="/passwordless">Login without Password</a>
       </Form >
+      <section className="opacity-40">
+        or continue with
+      </section>
+      <a data-primary href="/passwordless" className="w-full text-center">Login without Password</a>
     </>
   )
 }

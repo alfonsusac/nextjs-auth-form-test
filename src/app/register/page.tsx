@@ -49,8 +49,8 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
               await register({ username: usr, email: eml, password: pwd })
 
               // Send email verification
-              await sendEmailVerification(usr, eml)
-              redirect("/", "success=Account registered. Please check email to verify your email")
+              // await sendEmailVerification(usr, eml)
+              redirect("/login", "success=Account registered. You can now log in.")
             }
             catch (error) { handleActionError(error) }
 

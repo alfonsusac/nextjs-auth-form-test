@@ -1,6 +1,8 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Request } from "./request"
 import * as Navigation from "next/navigation"
+import { headers } from "next/headers"
+import { NotAuthenticated } from "@/api/authentication"
 
 
 export namespace Response {
@@ -71,6 +73,18 @@ export function handleActionError(error: any) {
   returnUnknownError()
 }
 
+/**
+ * TODO: Forward Link to Destination upon login
+ */
+export function notAuthenticated(): never {
+  try {
+    const header = headers()
+  } catch (error) {
+    throw new NotAuthenticated()
+  }
+  redirect('/401')
+}
+
 
 
 
@@ -85,7 +99,9 @@ export class DeveloperError extends Error {
   }
 }
 
-
+/**
+ * on handleActionError: Redirects current url + search param 
+ */
 export class ClientError extends Error {
   constructor(
     public readonly clientMessage: string,
@@ -109,3 +125,4 @@ export class BadRequestClientError extends ClientError {
     Object.setPrototypeOf(this, BadRequestClientError.prototype)
   }
 }
+

@@ -9,23 +9,25 @@
 
 /* LAYOUT-------------- -----------------*/
 body {
-  color: #fffc;
+  color: #fff;
   /* background: #111; */
+  padding: 0;
   background: #111;
   display: flex; 
   flex-direction: column;
   /* justify-content: center;  */
-  align-items: center; 
+  /* align-items: center;  */
   min-height: 100svh;
   font-size: 14px;
   overflow-y: scroll;
 }
 main {
-  padding: 2.5rem;
+  padding: 0rem 2.5rem 1.5rem 2.5rem;
   /* border-radius: 1.4rem; */
   /* background: #0004; */
   width: 100%;
-  max-width: 25rem;
+  max-width: 40rem;
+  margin-inline: auto;
   overflow-wrap: break-word;
 }
 
@@ -36,20 +38,41 @@ nav {
   display: flex;
   /* gap: 0.8rem; */
 }
+svg {
+  display:inline;
+  vertical-align: -0.125em;
+}
 
 
 /* CUSTOM COMPONENT -----------------*/
+header {
+  display: flex;
+  padding: 1.5rem 2.5rem;
+  justify-content: space-between;
+}
+header > section {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+header > section > h1 {
+  font-size: 1rem;
+}
+p{
+  color: #fff9;
+  /* font-size: 1rem; */
+}
 h1{
-  font-size: 1.8rem; font-weight: 500; letter-spacing: -0.4px;
+  font-size: 2rem; font-weight: 500; letter-spacing: -0.4px; 
 }
 h2{
-  font-size: 1.4rem; font-weight: 500; letter-spacing: -0.25px; margin-block: 1.4rem;
+  font-size: 1.8rem; font-weight: 600; letter-spacing: -0.25px; margin-block: 1.4rem 1rem;
+}
+h3{
+  font-size: 1rem; font-weight: 400; opacity: 0.2 ;
 }
 hr {
   opacity: 0.1;
-}
-header{
-  margin-block: 0.4rem;
 }
 a, button, button[type=submit] {
   display: inline-block;
@@ -69,9 +92,15 @@ a:hover, button:hover {
 a[data-inline]{
   display: inline;
   padding: 0rem;
+  &:hover{
+    background-color: transparent;
+  }
 }
-a[data-inline]:hover {
-  background-color: transparent;
+button[data-destructive]{
+  color: rgb(151, 45, 45);
+  &:hover{
+    background-color: rgba(151, 45, 45, 0.124)
+  }
 }
 
 div[data-callout-error] {
@@ -86,6 +115,11 @@ div[data-callout-success]{
   background-color: rgba(51, 255, 102, 0.133);
   margin-block: 1rem;
 }
+section[data-inline-between]{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 pre{
   /* white-space: unset; */
   white-space-trim: 5;
@@ -97,9 +131,9 @@ pre{
 }
 
 /* CONTENT TYPOGRAPHY -----------------*/
-* + header{
+/* * + header{
   margin-top:1.5rem;
-}
+} */
 article header{
   color: #fff6;
   /* font-weight: 600; */
@@ -148,3 +182,4 @@ a:hover, button:hover{
 a:active, button:active{
   filter: brightness(0.8)
 }
+

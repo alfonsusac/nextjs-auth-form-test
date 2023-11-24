@@ -40,7 +40,7 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
         <br />
         <br />
         <br />
-        <a data-primary href="/login">Login with Password</a>
+        <a href="/login">Login with Password</a>
       </form >
     </>
   )
