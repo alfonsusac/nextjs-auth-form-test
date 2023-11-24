@@ -45,7 +45,7 @@ svg {
 
 
 /* CUSTOM COMPONENT -----------------*/
-header {
+/* header {
   display: flex;
   padding: 1.5rem 2.5rem;
   justify-content: space-between;
@@ -57,7 +57,7 @@ header > section {
 }
 header > section > h1 {
   font-size: 1rem;
-}
+} */
 p{
   color: #fff9;
   /* font-size: 1rem; */

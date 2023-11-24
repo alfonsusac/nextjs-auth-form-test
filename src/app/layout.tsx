@@ -24,9 +24,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={ inter.className }>
-        <header>
+        <Header>
           <section>
-            <h1>🔒 Next.js Simple Auth</h1>
+            <p>🔒 <span data-lg>Next.js Simple Auth</span></p>
             <a href="/">Home</a>
           </section>
           <form>
@@ -41,11 +41,29 @@ export default async function RootLayout({
               <a href="/settings">Settings</a>
             </IfLoggedIn>
           </form>
-        </header>
+        </Header>
         <main>
           { children }
         </main>
       </body>
     </html >
   )
+}
+
+
+function Header({ children }: any) {
+  return <header className="
+    flex flex-row items-center justify-between max-w-screen-xl w-full mx-auto  
+    px-4
+    [&_p]:text-xl
+    [&_p]:font-semibold
+    [&_p]:text-white
+    [&>section]:flex
+    [&>section]:items-center
+    [&>section]:gap-4
+    [&_[data-lg]]:hidden
+    [&_[data-lg]]:md:inline
+  ">
+    { children }
+  </header>
 }
