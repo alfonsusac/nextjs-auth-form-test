@@ -1,5 +1,5 @@
 import { Authentication } from "@/api/authentication"
-import { LoggedInUser, changePassword } from "@/api/user-management"
+import { LoggedInUser, AccountManagement } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { Form } from "@/component/form"
 import { Input } from "@/component/input"
@@ -61,7 +61,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
         try {
           const { username } = await Authentication.requireVerifiedSession()
           const { oldPassword, newPassword } = form.validate(formData)
-          await changePassword({ oldPassword, newPassword, username })
+          await AccountManagement.changePassword({ oldPassword, newPassword, username })
           Navigation.redirectTo('/settings', 'success=Password successfully changed')
         }
         catch (error: any) {

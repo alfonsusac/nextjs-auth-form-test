@@ -129,17 +129,17 @@ export namespace Authentication {
   }
 
 
-  export async function getSession() {
+  export const getSession = cache(async function () {
     const payload = await UserJWTCookie.getCookieAndDecode()
     return payload
-  }
+  })
 
   export async function requireSession() {
     const session = await getSession()
     if (!session)
       Navigation.notAuthenticated()
     if (!session.username)
-      redirectTo('/passwordless/register')
+      Navigation.redirectTo('/passwordless/register')
     return session
   }
 
@@ -149,13 +149,34 @@ export namespace Authentication {
       Navigation.notVerified()
     return session
   }
-
+  
 }
 
 /**
  * ------ [ Auth Guard ] ------------------------------------------------
  */
+export namespace AuthGuard{
+  export async function memberOnly() {
+    const session = await Authentication.getSession()
+  }
+  export async function usernamelessOnly() {
+    const session = await Authentication.getSession()
+    console.log("User's username")
+    console.log(session?.username)
+    console.log("User's: " + !!session)
+    console.log("User's username: " + !!session?.username)
+    if (!session)
+      Navigation.redirectTo('/', 'error=Not Authenticated. Please log in again.')
+    if (session.username)
+      Navigation.redirectTo('/')
+    return session
+  }
+  export async function guestOnly() {
+    const session = await Authentication.getSession()
+    if(session) Navigation.redirectTo('/')
+  }
 
+}
 
 
 export const getCurrentSession = cache(async (opts?: {
@@ -164,11 +185,4 @@ export const getCurrentSession = cache(async (opts?: {
 }) => {
   const payload = await UserJWTCookie.getCookieAndDecode()
   return payload
-})
-
-export const getUserAndRedirectToHomeIfNotAuthenticated = cache(async () => {
-  const session = await getCurrentSession()
-  if (!session) redirectTo('/', 'error=Not Authenticated. Please log in again.')
-  if (!session.username) redirectTo('/passwordless/register')
-  return session
 })

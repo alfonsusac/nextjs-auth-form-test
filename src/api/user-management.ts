@@ -1,4 +1,4 @@
-import { Authentication, getCurrentSession } from "./authentication"
+import { Authentication } from "./authentication"
 import { Cryptography } from "@/lib/crypto"
 import { User } from "@/model/user"
 import { Password } from "@/model/password"
@@ -12,9 +12,8 @@ import { ClientError } from "@/lib/error/class"
 export namespace LoggedInUser {
 
   export async function getUser() {
-    const session = await getCurrentSession()
-    if (!session) Navigation.notAuthenticated()
-    const user = await User.findUsername(session.username)
+    const { username } = await Authentication.requireSession()
+    const user = await User.findUsername(username)
     if (!user) {
       await Authentication.logout()
       Navigation.notAuthenticated()
@@ -32,27 +31,30 @@ export namespace LoggedInUser {
   }
 }
 
-export namespace UserManagement{
-  export async function deleteUser(p:{ username: string, email: string }) {
+export namespace AccountManagement {
+
+  export async function deleteUser(p: { username: string, email: string }) {
     await User.remove(p.username, p.email)
     await Authentication.logout()
   }
 
+  export async function changePassword({ newPassword, oldPassword, username }: {
+    username: string
+    oldPassword: string,
+    newPassword: string
+  }) {
+    const storedPassword = await Password.find(username)
+    if (!storedPassword) ClientError.invalidInput("User not found! User may be using passwordless login.")
+
+    const valid = await Cryptography.verify(storedPassword.value, oldPassword)
+    if (!valid) ClientError.invalidInput("Password doesn't match! Please enter old password.")
+
+    const hashedNewPassword = await Cryptography.hash(newPassword)
+    await Password.update(username, storedPassword.value, hashedNewPassword)
+  }
+
+
+
 }
 
 
-
-export async function changePassword({ newPassword, oldPassword, username }: {
-  username: string
-  oldPassword: string,
-  newPassword: string
-}) {
-  const storedPassword = await Password.find(username)
-  if (!storedPassword) throw new Error("User not found")
-
-  const valid = await Cryptography.verify(storedPassword.value, oldPassword)
-  if (!valid) ClientError.invalidInput("Password doesn't match! Please enter old password.")
-
-  const hashedNewPassword = await Cryptography.hash(newPassword)
-  await Password.update(username, storedPassword.value, hashedNewPassword)
-}

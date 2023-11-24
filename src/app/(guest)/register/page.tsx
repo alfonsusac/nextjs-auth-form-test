@@ -4,6 +4,7 @@ import { sendEmailVerification } from "@/api/verification"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { Navigation } from "@/lib/error"
 import { Authentication } from "@/api/authentication"
+import { Form } from "@/component/form"
 
 const form = createForm({
   'eml': {
@@ -29,8 +30,8 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
   return (
     <>
       <h2>Sign Up</h2>
-      <form>
-        <SearchParamStateCallout searchParams={ searchParams } />
+      <p>Enter your email, username and password to register to the application</p>
+      <Form sp={searchParams}>
         <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />
         <Input { ...form.fields.usr.attributes } label={ form.fields.usr.label } defaultValue={ form.defaultValues.usr.get() } />
         <Input { ...form.fields.pwd.attributes } label={ form.fields.pwd.label } />
@@ -52,7 +53,9 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
           } }
         > Register </button>
         <a href="/login" className="button">login</a>
-      </form >
+      </Form >
+      <section className="opacity-40">or continue with</section>
+      <a data-primary href="/passwordless" className="w-full text-center">Register without Password</a>
     </>
   )
 }

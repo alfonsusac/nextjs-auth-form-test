@@ -1,5 +1,5 @@
-import { Authentication, getCurrentSession, getUserAndRedirectToHomeIfNotAuthenticated } from "@/api/authentication"
-import { UserManagement } from "@/api/user-management"
+import { Authentication, getCurrentSession } from "@/api/authentication"
+import { AccountManagement } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { AuthGuard, IfNotVerified, IfVerified } from "@/component/authentication"
 import { Form } from "@/component/form"
@@ -10,7 +10,7 @@ export default async function Page({ searchParams }: any) {
 
   async function verifyAction() {
     "use server"
-    const session = await getUserAndRedirectToHomeIfNotAuthenticated()
+    const session = await Authentication.requireSession()
     await sendEmailVerification(session.username, session.email)
     Navigation.success('Email sent! Check your email to verify')
   }
@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: any) {
   async function deleteUserAction() {
     "use server"
     try {
-      await UserManagement.deleteUser(await Authentication.requireSession())
+      await AccountManagement.deleteUser(await Authentication.requireVerifiedSession())
       Navigation.redirectTo('/', 'success=Account successfully deleted!')
     } catch (error) {
       Navigation.handleFormError(error)
