@@ -40,18 +40,16 @@ export default async function RootLayout({
             </IfLoggedIn>
           </section>
         </Header>
-        <main>
-          { children }
-        </main>
+        <Main>{ children }</Main>
       </body>
     </html >
   )
 }
 
-
 function Header({ children }: any) {
   return <header className="
-    flex flex-row items-center justify-between max-w-screen-xl w-full mx-auto  
+    flex flex-row items-center justify-between 
+    max-w-screen-xl w-full mx-auto  
     px-4
     [&>section]:flex
     [&>section]:items-center
@@ -64,4 +62,19 @@ function Header({ children }: any) {
   ">
     { children }
   </header>
+}
+
+function Main({ children }: any) {
+  return <main className="
+    max-w-screen-lg w-full mx-auto
+    px-10 pb-24
+    break-words
+    my-auto
+
+    [&_[data-dialog]]:max-w-sm
+    [&_[data-dialog]]:m-auto
+    [&_[data-dialog]]:my-auto
+  ">
+    { children }
+  </main>
 }

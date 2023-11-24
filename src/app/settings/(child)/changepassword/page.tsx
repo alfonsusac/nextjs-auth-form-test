@@ -33,7 +33,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
     return <>
       <h2>Change Password</h2>
       <p>You need to verify your email before changing your password</p>
-      <Form searchParams={ searchParams }>
+      <Form sp={ searchParams }>
         <button type="submit" formAction={ async () => {
 
           "use server"
@@ -49,7 +49,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
 
   return <>
     <h2>Change Password</h2>
-    <Form searchParams={ searchParams }>
+    <Form sp={ searchParams }>
       <Input { ...form.fields.oldPassword.attributes } label={ form.fields.oldPassword.label } />
       <Input { ...form.fields.newPassword.attributes } label={ form.fields.newPassword.label } />
       <br />

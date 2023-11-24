@@ -10,25 +10,13 @@
 /* LAYOUT-------------- -----------------*/
 body {
   color: #fff;
-  /* background: #111; */
   padding: 0;
   background: #111;
   display: flex; 
   flex-direction: column;
-  /* justify-content: center;  */
-  /* align-items: center;  */
   min-height: 100svh;
   font-size: 14px;
   overflow-y: scroll;
-}
-main {
-  padding: 0rem 2.5rem 1.5rem 2.5rem;
-  /* border-radius: 1.4rem; */
-  /* background: #0004; */
-  width: 100%;
-  max-width: 40rem;
-  margin-inline: auto;
-  overflow-wrap: break-word;
 }
 
 section{ 
@@ -49,10 +37,10 @@ p{
   color: #fff9;
 }
 h1{
-  font-size: 2rem; font-weight: 500; letter-spacing: -0.4px; 
+  font-size: 2rem; font-weight: 600; letter-spacing: -0.4px; line-height: 2;
 }
 h2{
-  font-size: 1.8rem; font-weight: 600; letter-spacing: -0.25px; margin-block: 1.4rem 1rem;
+  font-size: 1.8rem; font-weight: 600; letter-spacing: -0.25px; 
 }
 h3{
   font-size: 1rem; font-weight: 400; opacity: 0.2 ;
@@ -70,6 +58,8 @@ a, button, button[type=submit] {
   font-weight: 500;
   font-size: 0.8rem;
   text-decoration: none;
+
+  cursor: pointer;
 }
 a:hover, button:hover {
   background-color: #fff1;

@@ -1,13 +1,14 @@
 import { SearchParamStateCallout } from "./searchParams"
 
 export async function Form(p: {
-  searchParams: { [key: string]: string },
+  sp: { [key: string]: string },
   children: React.ReactNode
+  className?: string,
 }) {
   return (
-    <form>
-      <SearchParamStateCallout searchParams={ p.searchParams } />
-      {p.children}
+    <form className={ p.className }>
+      <SearchParamStateCallout searchParams={ p.sp } />
+      { p.children }
     </form>
   )
 }

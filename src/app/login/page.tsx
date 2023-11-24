@@ -24,14 +24,15 @@ const loginForm = createForm({
 
 export default function LoginPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   return (
-    <>
+    <section data-dialog>
       <h2>Login</h2>
-      <Form searchParams={ searchParams }>
+      <Form sp={ searchParams }>
         <Input { ...loginForm.fields.username.attributes } label={ loginForm.fields.username.label } defaultValue={ loginForm.defaultValues.username.get() } />
         <Input { ...loginForm.fields.password.attributes } label={ loginForm.fields.password.label } />
         <br />
         <button type="submit" formAction={
           async (formData) => {
+
             "use server"
             try {
               const input = loginForm.validate(formData)
@@ -39,18 +40,16 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
               redirect('/', 'success=Successfuly logged in')
             }
             catch (error) { handleActionError(error) }
+
           }
         } >
           Login
         </button>
-        <a href="/register" className="button">register</a>
-        <a href="/forgotpassword" className="button">forgot password</a>
-        <br />
+        <a href="/register">register</a>
+        <a href="/forgotpassword">forgot password</a>
       </Form >
-      <section className="opacity-40">
-        or continue with
-      </section>
+      <section className="opacity-40">or continue with</section>
       <a data-primary href="/passwordless" className="w-full text-center">Login without Password</a>
-    </>
+    </section>
   )
 }

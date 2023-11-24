@@ -43,7 +43,7 @@ export default async function Page({ searchParams }: any) {
 
     <h2>Settings</h2>
 
-    <Form searchParams={ searchParams }>
+    <Form sp={ searchParams }>
       <section>
 
         <h3>Account</h3>

@@ -9,7 +9,7 @@ export default async function Page({ searchParams }: any) {
   if (!session) redirect('/login')
 
   return (
-    <Form searchParams={ searchParams }>
+    <Form sp={ searchParams }>
       <div data-callout-error>Verification Failed. Please try again</div>
       <div>
         <button type="submit" formAction={
