@@ -26,21 +26,19 @@ export default async function RootLayout({
       <body className={ inter.className }>
         <Header>
           <section>
-            <p>🔒 <span data-lg>Next.js Simple Auth</span></p>
+            <p>🔒 <span>Next.js Simple Auth</span></p>
             <a href="/">Home</a>
           </section>
-          <form>
+          <section>
             <IfNotLoggedIn>
               <a href="/login" data-primary>Log in</a>
               <a href="/register">Register</a>
             </IfNotLoggedIn>
             <IfLoggedIn>
-              <span className="mr-2">
-                { user?.username }
-              </span>
+              <p>{ user?.username }</p>
               <a href="/settings">Settings</a>
             </IfLoggedIn>
-          </form>
+          </section>
         </Header>
         <main>
           { children }
@@ -55,14 +53,14 @@ function Header({ children }: any) {
   return <header className="
     flex flex-row items-center justify-between max-w-screen-xl w-full mx-auto  
     px-4
-    [&_p]:text-xl
-    [&_p]:font-semibold
-    [&_p]:text-white
     [&>section]:flex
     [&>section]:items-center
-    [&>section]:gap-4
-    [&_[data-lg]]:hidden
-    [&_[data-lg]]:md:inline
+    [&>section]:gap-2
+    [&>section>p]:text-xl
+    [&>section>p]:font-semibold
+    [&>section>p]:text-white
+    [&>section_span]:hidden
+    [&>section_span]:md:inline
   ">
     { children }
   </header>

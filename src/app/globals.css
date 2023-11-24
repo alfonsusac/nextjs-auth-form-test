@@ -45,22 +45,8 @@ svg {
 
 
 /* CUSTOM COMPONENT -----------------*/
-/* header {
-  display: flex;
-  padding: 1.5rem 2.5rem;
-  justify-content: space-between;
-}
-header > section {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-header > section > h1 {
-  font-size: 1rem;
-} */
 p{
   color: #fff9;
-  /* font-size: 1rem; */
 }
 h1{
   font-size: 2rem; font-weight: 500; letter-spacing: -0.4px; 
@@ -174,7 +160,7 @@ button[type=submit], a[data-primary] {
   font-weight: 600;
   font-size: 0.8rem;
   text-decoration: none;
-  margin-inline-end: 0.4rem;
+  /* margin-inline-end: 0.4rem; */
 }
 a:hover, button:hover{
   filter: brightness(0.9)
