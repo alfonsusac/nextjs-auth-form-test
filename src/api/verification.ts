@@ -1,11 +1,10 @@
 import { JWTHandler } from "@/lib/jwt"
 import { Request } from "@/lib/request"
 import { Email } from "@/lib/email"
-import { ClientError, redirect } from "@/lib/error"
 import ms, { StringValue } from "@/lib/ms"
 import { DB, UserVerification } from "@/model/verification"
 import { logger } from "@/lib/logger"
-import { NextRequest, NextResponse } from "next/server"
+import { ClientErrorBaseClass } from "@/lib/error/class"
 
 /** ========================================================================================
 *
@@ -73,19 +72,19 @@ export async function verifyEmailVerification(jwt: string) {
 * ========================================================================================
 */
 
-export class DecodingError extends ClientError {
+export class DecodingError extends ClientErrorBaseClass {
   constructor(servermsg: string) {
     super("Invalid Verification Token", servermsg)
   }
 }
 
-export class InvalidSearchParam extends ClientError {
+export class InvalidSearchParam extends ClientErrorBaseClass {
   constructor(msg: string) {
     super(msg)
     console.log("Invalid Search Params: " + msg)
   }
 }
-export class VerificationError extends ClientError { }
+export class VerificationError extends ClientErrorBaseClass { }
 
 /** ========================================================================================
 *

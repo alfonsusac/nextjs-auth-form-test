@@ -1,12 +1,12 @@
-import { logout } from "@/api/authentication"
-import { redirect } from "@/lib/error"
+import { Authentication } from "@/api/authentication"
+import { redirectTo } from "@/lib/error"
 
 export function LogoutButton() {
   return (
     <button formAction={ async () => {
       "use server"
-      await logout()
-      redirect('', `success=Successfully logged out`)
+      await Authentication.logout()
+      redirectTo('', `success=Successfully logged out`)
     }
     }>
       Log out

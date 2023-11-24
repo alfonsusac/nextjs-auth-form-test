@@ -1,4 +1,4 @@
-export class ClientError extends Error {
+export class ClientErrorBaseClass extends Error {
   constructor(
     public readonly clientMessage: string,
     serverMessage: string = clientMessage
@@ -7,11 +7,17 @@ export class ClientError extends Error {
 
 export namespace ClientError {
 
-  export function invalidInput(msg: string): never {
-    throw new ClientError("Invalid Input", msg)
+  export function invalidInput(clientmsg: string): never {
+    throw new ClientErrorBaseClass(clientmsg, clientmsg)
   }
-  export function unauthorized() {
-    throw new ClientError("Unauthorized")
+  export function unauthorized(): never {
+    throw new ClientErrorBaseClass("You are unauthorized to access this resource")
   }
-  
+  export function notAuthenticated(): never {
+    throw new ClientErrorBaseClass("Not Authenticated. Please sign in to continue.")
+  }
+  export function invalidCredential(msg: string): never {
+    throw new ClientErrorBaseClass("Invalid Credentials", msg)
+  }
+
 }

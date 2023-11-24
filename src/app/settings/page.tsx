@@ -1,9 +1,9 @@
-import { getCurrentSession, getUserAndRedirectToHomeIfNotAuthenticated, logout } from "@/api/authentication"
-import { deleteUser } from "@/api/user-management"
+import { Authentication, getCurrentSession, getUserAndRedirectToHomeIfNotAuthenticated } from "@/api/authentication"
+import { UserManagement } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { AuthGuard, IfNotVerified, IfVerified } from "@/component/authentication"
 import { Form } from "@/component/form"
-import { handleActionError, notAuthenticated, redirect, returnSuccessMessage } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 
 export default async function Page({ searchParams }: any) {
   const session = await getCurrentSession()
@@ -12,27 +12,26 @@ export default async function Page({ searchParams }: any) {
     "use server"
     const session = await getUserAndRedirectToHomeIfNotAuthenticated()
     await sendEmailVerification(session.username, session.email)
-    returnSuccessMessage('Email sent! Check your email to verify')
+    Navigation.success('Email sent! Check your email to verify')
   }
 
   async function logoutAction() {
     "use server"
-    const user = await getCurrentSession()
-    if (!user) notAuthenticated()
-    await logout()
-    redirect('/', `success=Successfully logged out`)
+    try {
+      await Authentication.logout()
+      Navigation.redirectTo('/', `success=Successfully logged out`)
+    } catch (error) {
+      Navigation.handleFormError(error)
+    }
   }
 
   async function deleteUserAction() {
     "use server"
     try {
-      const user = await getCurrentSession()
-      if (!user) notAuthenticated()
-      await deleteUser()
-      redirect('/', 'success=Account successfully deleted!')
-    }
-    catch (error) {
-      handleActionError(error)
+      await UserManagement.deleteUser(await Authentication.requireSession())
+      Navigation.redirectTo('/', 'success=Account successfully deleted!')
+    } catch (error) {
+      Navigation.handleFormError(error)
     }
   }
 

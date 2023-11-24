@@ -1,7 +1,7 @@
-import { sendForgotPasswordEmail } from "@/api/authentication"
+import { Authentication } from "@/api/authentication"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
-import { handleActionError, returnSuccessMessage } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
 
 const form = createForm(
@@ -27,10 +27,12 @@ export default function ForgotPassword({ searchParams }: any) {
             "use server"
             try {
               const { email } = form.validate(formData)
-              await sendForgotPasswordEmail({ email })
-              returnSuccessMessage('An email is sent to reset your password!')
+              await Authentication.sendForgotPasswordEmail({ email })
+              Navigation.success('An email is sent to reset your password!')
             }
-            catch (error: any) { handleActionError(error) }
+            catch (error: any) {
+              Navigation.handleFormError(error)
+            }
           }
         }>
           Verify

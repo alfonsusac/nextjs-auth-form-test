@@ -150,7 +150,7 @@ button[type=submit], a[data-primary] {
   font-weight: 600;
   font-size: 0.8rem;
   text-decoration: none;
-  /* margin-inline-end: 0.4rem; */
+  margin-inline-end: 0.4rem;
 }
 a:hover, button:hover{
   filter: brightness(0.9)

@@ -1,5 +1,5 @@
 import { getCurrentSession } from "@/api/authentication"
-import { redirect } from "@/lib/error"
+import { redirectTo } from "@/lib/error"
 
 export async function IfNotLoggedIn(p: {
   children?: React.ReactNode
@@ -33,8 +33,8 @@ export async function AuthGuard(p: {
   redirectTo?: string
 }) {
   const session = await getCurrentSession()
-  if (!session) redirect('/login', 'error=You are not authorized!')
-  if(p.verified && !session.verified) redirect('/', 'error=You need to verify your email!')
+  if (!session) redirectTo('/login', 'error=You are not authorized!')
+  if(p.verified && !session.verified) redirectTo('/', 'error=You need to verify your email!')
   return <></>
 }
 

@@ -1,8 +1,8 @@
-import { Verifications, resetPassword } from "@/api/authentication"
+import { Authentication, Verifications } from "@/api/authentication"
 import { InvalidSearchParam } from "@/api/verification"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
-import { handleActionError, redirect } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 import { JWTHandler } from "@/lib/jwt"
 import { createForm } from "@/lib/validations/formData"
 
@@ -43,13 +43,15 @@ export default async function ResetPassword({ searchParams }: any) {
               try {
                 const { password, hiddenToken } = form.validate(formData)
                 const payload = await resetPasswordToken.decode(hiddenToken)
-                await resetPassword({
+                await Authentication.resetPassword({
                   username: payload.username,
                   newPassword: password
                 })
-                redirect('/', 'success=Password successfully resetted!')
+                Navigation.redirectTo('/', 'success=Password successfully resetted!')
               }
-              catch (error: any) { handleActionError(error) }
+              catch (error: any) {
+                Navigation.handleFormError(error)
+              }
             }
           }>
             Reset password
@@ -61,11 +63,11 @@ export default async function ResetPassword({ searchParams }: any) {
 
   } catch (error) {
     if (error instanceof InvalidSearchParam) {
-      redirect('/')
+      Navigation.redirectTo('/')
     }
     console.log("Error verifying incoming request")
     console.log(error)
-    redirect('/forgotpassword', 'error=Verification Failed. Please try again')
+    Navigation.redirectTo('/forgotpassword', 'error=Verification Failed. Please try again')
   }
 
 }

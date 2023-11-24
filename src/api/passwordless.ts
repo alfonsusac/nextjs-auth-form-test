@@ -1,7 +1,7 @@
 import { User } from "@/model/user"
 import { EmailVerification } from "./verification"
 import { JWTCookieHandler } from "@/lib/jwt"
-import { redirect } from "@/lib/error"
+import { redirectTo } from "@/lib/error"
 import { UserJWTCookie } from "./authentication"
 
 export namespace Verifications{

@@ -1,9 +1,9 @@
 import { Input } from "@/component/input"
-import { handleActionError, redirect } from "@/lib/error"
-import { register } from "@/api/authentication"
 import { createForm } from "@/lib/validations/formData"
 import { sendEmailVerification } from "@/api/verification"
 import { SearchParamStateCallout } from "@/component/searchParams"
+import { Navigation } from "@/lib/error"
+import { Authentication } from "@/api/authentication"
 
 const form = createForm({
   'eml': {
@@ -41,18 +41,13 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
 
             "use server"
             try {
-
-              // Validate the input
               const { usr, eml, pwd } = form.validate(formData)
-
-              // Creates new user row in the database.
-              await register({ username: usr, email: eml, password: pwd })
-
-              // Send email verification
-              // await sendEmailVerification(usr, eml)
-              redirect("/login", "success=Account registered. You can now log in.")
+              await Authentication.register({ username: usr, email: eml, password: pwd })
+              Navigation.redirectTo("/login", "success=Account registered. You can now log in.")
             }
-            catch (error) { handleActionError(error) }
+            catch (error) {
+              Navigation.handleFormError(error)
+            }
 
           } }
         > Register </button>

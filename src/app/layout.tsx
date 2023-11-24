@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { getCurrentSession, logout } from '@/api/authentication'
+import { getCurrentSession } from '@/api/authentication'
 import { IfLoggedIn, IfNotLoggedIn } from '@/component/authentication'
 
 const inter = Inter({
@@ -53,10 +53,10 @@ function Header({ children }: any) {
     px-4
     [&>section]:flex
     [&>section]:items-center
-    [&>section]:gap-2
     [&>section>p]:text-xl
     [&>section>p]:font-semibold
     [&>section>p]:text-white
+    [&>section>p]:mr-4
     [&>section_span]:hidden
     [&>section_span]:md:inline
   ">

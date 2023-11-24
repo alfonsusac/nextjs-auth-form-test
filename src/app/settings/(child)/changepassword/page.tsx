@@ -1,8 +1,9 @@
+import { Authentication } from "@/api/authentication"
 import { LoggedInUser, changePassword } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { Form } from "@/component/form"
 import { Input } from "@/component/input"
-import { handleActionError, redirect, returnSuccessMessage } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
 
 const form = createForm(
@@ -37,9 +38,9 @@ export default async function ChangePasswordPage({ searchParams }: any) {
         <button type="submit" formAction={ async () => {
 
           "use server"
-          const session = await LoggedInUser.getSession()
+          const session = await Authentication.requireSession()
           await sendEmailVerification(session.username, session.email)
-          returnSuccessMessage('Email sent! Check your email to verify')
+          Navigation.success('Email sent! Check your email to verify')
 
         } }>Verify</button>
       </Form>
@@ -58,13 +59,16 @@ export default async function ChangePasswordPage({ searchParams }: any) {
 
         "use server"
         try {
+          const { username } = await Authentication.requireVerifiedSession()
           const { oldPassword, newPassword } = form.validate(formData)
-          await changePassword({ oldPassword, newPassword })
-          redirect('/settings', 'success=Password successfully changed')
+          await changePassword({ oldPassword, newPassword, username })
+          Navigation.redirectTo('/settings', 'success=Password successfully changed')
         }
-        catch (error: any) { handleActionError(error) }
+        catch (error: any) {
+          Navigation.handleFormError(error)
+        }
 
-
+        
       } }>Change Password</button>
     </Form>
   </>

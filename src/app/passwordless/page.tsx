@@ -1,5 +1,5 @@
 import { Input } from "@/component/input"
-import { handleActionError, returnSuccessMessage } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
 import { passwordlessInitialize } from "@/api/passwordless"
 import { SearchParamStateCallout } from "@/component/searchParams"
@@ -30,9 +30,11 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
             try {
               const { eml } = form.validate(formData)
               await passwordlessInitialize(eml)
-              returnSuccessMessage('Verification Email Sent!\n Please check your email.')
+              Navigation.success('Verification Email Sent!\n Please check your email.')
             }
-            catch (error) { handleActionError(error) }
+            catch (error) {
+              Navigation.handleFormError(error)
+            }
           }
         } >
           Send Magic Link

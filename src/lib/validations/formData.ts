@@ -1,5 +1,5 @@
 import { Cookie, ReadOnlyCookie } from "../cookies"
-import { ClientError } from "../error"
+import { ClientError, ClientErrorBaseClass } from "../error/class"
 import { ValidatorOptions } from "./fieldBuilder"
 import { Field, ValidationError } from "./validator"
 
@@ -111,7 +111,7 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
           // If it breaks validation rules then return
           if (validator.fn(fieldValue)) {
             if (!checkAll)
-              throw new ClientError("Invalid input", `Field ${field} is invalid`)
+              ClientError.invalidInput(`Field ${field} is invalid`)
             else
               errors.push({ field, type: validator.type })
           }

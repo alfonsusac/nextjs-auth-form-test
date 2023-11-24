@@ -1,6 +1,6 @@
 import { UserJWTCookie } from "@/api/authentication"
 import { Verifications } from "@/api/passwordless"
-import { redirect } from "@/lib/error"
+import { redirectTo } from "@/lib/error"
 import { User } from "@/model/user"
 import { UserVerification } from "@/model/verification"
 import { NextRequest } from "next/server"
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
         email: data.email,
         verified: true,
       })
-      redirect('/passwordless/register')
+      redirectTo('/passwordless/register')
     }
 
     if (!user.verification?.verified) {
@@ -33,14 +33,14 @@ export async function GET(request: NextRequest) {
       verified: true,
     })
 
-    redirect('/', 'success=You are logged in!')
+    redirectTo('/', 'success=You are logged in!')
     
   }
   catch (error: any) {
     if (error.message === "NEXT_REDIRECT") throw error
 
     console.log(error)
-    redirect('/passwordless/register', 'error=Verification failed! Please try again.')
+    redirectTo('/passwordless/register', 'error=Verification failed! Please try again.')
   }
 
 }

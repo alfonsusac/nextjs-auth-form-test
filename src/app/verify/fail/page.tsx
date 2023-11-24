@@ -1,12 +1,12 @@
-import { getCurrentSession } from "@/api/authentication"
+import { Authentication, getCurrentSession } from "@/api/authentication"
 import { LoggedInUser } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { Form } from "@/component/form"
-import { redirect } from "@/lib/error"
+import { redirectTo } from "@/lib/error"
 
 export default async function Page({ searchParams }: any) {
   const session = await getCurrentSession()
-  if (!session) redirect('/login')
+  if (!session) redirectTo('/login')
 
   return (
     <Form sp={ searchParams }>
@@ -15,9 +15,9 @@ export default async function Page({ searchParams }: any) {
         <button type="submit" formAction={
           async () => {
             "use server"
-            const session = await LoggedInUser.getSession()
+            const session = await Authentication.requireSession()
             await sendEmailVerification(session.username, session.email)
-            redirect('/', 'success=Successful! Your email is verified.')
+            redirectTo('/', 'success=Successful! Your email is verified.')
           }
         }>
           Resend Notification
