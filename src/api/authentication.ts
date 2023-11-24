@@ -1,10 +1,11 @@
 import { Cryptography } from "@/lib/crypto"
 import { JWTCookieHandler } from "@/lib/jwt"
-import { Password, User } from "@/model/user"
 import { cache } from "react"
 import { Cookie } from "@/lib/cookies"
 import { ClientError, InvalidCredentialClientError, redirect } from "@/lib/error"
 import { EmailVerification } from "./verification"
+import { User } from "@/model/user"
+import { Password } from "@/model/password"
 
 
 /** ========================================================================================

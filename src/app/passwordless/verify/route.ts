@@ -1,7 +1,8 @@
 import { UserJWTCookie } from "@/api/authentication"
 import { Verifications } from "@/api/passwordless"
 import { redirect } from "@/lib/error"
-import { User, UserVerification } from "@/model/user"
+import { User } from "@/model/user"
+import { UserVerification } from "@/model/verification"
 import { NextRequest } from "next/server"
 
 export const dynamic = 'force-dynamic'

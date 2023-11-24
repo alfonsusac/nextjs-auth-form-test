@@ -1,11 +1,10 @@
-import { Verifications, sendForgotPasswordEmail, resetPassword } from "@/api/authentication"
-import { DecodingError, EmailVerification, InvalidSearchParam } from "@/api/verification"
+import { Verifications, resetPassword } from "@/api/authentication"
+import { InvalidSearchParam } from "@/api/verification"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
-import { ClientError, handleActionError, redirect } from "@/lib/error"
+import { handleActionError, redirect } from "@/lib/error"
 import { JWTHandler } from "@/lib/jwt"
 import { createForm } from "@/lib/validations/formData"
-import { Password, User } from "@/model/user"
 
 const form = createForm({
   'password': {

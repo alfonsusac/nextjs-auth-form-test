@@ -37,6 +37,7 @@ export function returnUnknownError(): never {
 }
 
 export function isPrismaUniqueConstraintError(error: any, field: string) {
+  
   if (
     error instanceof PrismaClientKnownRequestError
     && error.code === "P2002"
@@ -95,7 +96,6 @@ export function notAuthenticated(): never {
 export class DeveloperError extends Error {
   constructor(msg: string) {
     super(msg)
-    Object.setPrototypeOf(this, DeveloperError.prototype)
   }
 }
 

@@ -1,11 +1,16 @@
+import { User } from "@/model/user"
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 
-export function GET() {
+export async function GET() {
   const header = headers()
-  // console.log(JSON.stringify(header, null, 1))
-  
   console.log(Object.fromEntries(header.entries()))
+  await User.create({
+    email: "alfonssusac@gmail.com",
+    username: "alfonso",
+    password: "alfonso",
+    provider: "password"
+  })
   return NextResponse.json(Object.fromEntries(header.entries()))
 }
 

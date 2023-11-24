@@ -1,10 +1,9 @@
 import { JWTHandler } from "@/lib/jwt"
-import { UserVerification } from "@/model/user"
 import { Request } from "@/lib/request"
 import { Email } from "@/lib/email"
 import { ClientError, redirect } from "@/lib/error"
 import ms, { StringValue } from "@/lib/ms"
-import { DB } from "@/model/verification"
+import { DB, UserVerification } from "@/model/verification"
 import { logger } from "@/lib/logger"
 import { NextRequest, NextResponse } from "next/server"
 

@@ -1,7 +1,8 @@
-import { Password, User } from "@/model/user"
 import { getCurrentSession, getUserAndRedirectToHomeIfNotAuthenticated, logout } from "./authentication"
 import { ClientError, DeveloperError, notAuthenticated } from "@/lib/error"
 import { Cryptography } from "@/lib/crypto"
+import { User } from "@/model/user"
+import { Password } from "@/model/password"
 
 export async function getUserAccount() {
   const session = await getCurrentSession()
