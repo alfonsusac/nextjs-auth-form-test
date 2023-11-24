@@ -22,7 +22,7 @@ const loginForm = createForm({
 
 export default function LoginPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   return <>
-    <h2>Login</h2>
+    <h1>Login</h1>
     <p>Enter your username and password to log in into the application</p>
     <Form sp={ searchParams }>
       <Input { ...loginForm.fields.username.attributes } label={ loginForm.fields.username.label } defaultValue={ loginForm.defaultValues.username.get() } />

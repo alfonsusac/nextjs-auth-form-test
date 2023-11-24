@@ -38,9 +38,8 @@ function Main({ children }: any) {
     [&>header]:text-base
     [&>header>p]:text-white
     [&>header>p]:text-center
-    [&>h2]:text-center
-    [&>h2]:leading-loose
-    [&>p]:text-center
+    [&>header>p]:text-center
+    [&>header>h1]:text-center
   ">
     { children }
   </main>

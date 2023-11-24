@@ -29,7 +29,7 @@ const form = createForm({
 export default async function RegisterPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   return (
     <>
-      <h2>Sign Up</h2>
+      <h1>Sign Up</h1>
       <p>Enter your email, username and password to register to the application</p>
       <Form sp={searchParams}>
         <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />

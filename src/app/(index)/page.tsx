@@ -23,7 +23,10 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
       </section>
 
       <section className="mt-24">
-        <h2 className="text-center mb-8">Features</h2>
+        <header className=" mb-8">
+          <h2 className="text-center">Features & Concepts</h2>
+          <p className="text-center">All the features and concepts used for this learning project</p>
+        </header>
         <div className="
         grid gap-1
         grid-cols-2 md:grid-cols-3
@@ -39,25 +42,32 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
           </div>
           <div>
             <h3>Passwordless</h3>
-            <p>Login without password, verification via email using Resend</p>
+            <p>Login without password, verification via email using Resend.</p>
           </div>
           <div>
             <h3>Email Verification</h3>
-            <p>Verify email after logging in, or when critical action is needed</p>
+            <p>Verify email after logging in, or when critical action is needed.</p>
           </div>
           <div>
             <h3>Forgot Password</h3>
-            <p>Send email verification when password is forgotton to reset to new password</p>
+            <p>Send email verification when password is forgotton to reset to new password.</p>
           </div>
           <div>
             <h3>JWT</h3>
-            <p>Stores session state in the client, authenticating user without accessing database</p>
+            <p>Stores session state in the client, authenticating user without accessing database.</p>
+          </div>
+          <div>
+            <h3>No Client Components</h3>
+            <p>Allowing progressive enhancement. Client component can still be used to increase interactivity</p>
           </div>
         </div>
       </section>
 
       <section className="mt-24 mb-48">
-        <h2 className="text-center mb-8">Technologies</h2>
+        <header className=" mb-8">
+          <h2 className="text-center">Technologies</h2>
+          <p className="text-center">All the major technologies used for this learning project</p>
+        </header>
         <div className="
         flex gap-2
         justify-center

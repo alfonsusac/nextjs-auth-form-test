@@ -18,7 +18,8 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
 
   return (
     <>
-      <h2>Login with Magic Link</h2>
+      <h1>Passwordless Login</h1>
+      <p>Enter your email to sign in or register account using a one-time magic link</p>
       <form>
         <SearchParamStateCallout searchParams={ searchParams } />
         <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />
@@ -39,11 +40,9 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
         } >
           Send Magic Link
         </button>
-        <br />
-        <br />
-        <br />
-        <a href="/login">Login with Password</a>
       </form >
+      <section className="opacity-40">or continue with</section>
+      <a data-primary href="/login" className="w-full text-center">Login with Password</a>
     </>
   )
 }
