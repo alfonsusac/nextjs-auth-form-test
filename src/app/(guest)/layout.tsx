@@ -1,10 +1,12 @@
-import { Authentication } from "@/api/authentication"
+import { AuthGuard, Authentication } from "@/api/authentication"
 import { IfLoggedIn, IfNotLoggedIn } from "@/component/authentication"
 import { Header } from "../(index)/layout"
 import { Navigation } from "@/lib/error"
 
 export default async function IndexLayout({ children }: any) {
 
+  // Do not put this here or /passwordless wont work!
+  // await AuthGuard.guestOnly()
   const user = await Authentication.getSession()
 
   return <>
@@ -29,17 +31,17 @@ export default async function IndexLayout({ children }: any) {
 }
 function Main({ children }: any) {
   return <main className="
-    max-w-screen-lg w-full mx-auto
+    max-w-md w-full mx-auto
     px-10 pb-24
     break-words
     my-auto
-    max-w-sm
+
     [&>header]:mb-4
     [&>header]:text-base
     [&>header>p]:text-white
     [&>header>p]:text-center
-    [&>header>p]:text-center
-    [&>header>h1]:text-center
+    [&_p]:text-center
+    [&_h1]:text-center
   ">
     { children }
   </main>

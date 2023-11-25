@@ -33,7 +33,7 @@ export function Header({ children }: any) {
     px-4
     [&>section]:flex
     [&>section]:items-center
-    [&>section>p]:text-xl
+    [&>section:first-of-type>p]:text-xl
     [&>section>p]:font-semibold
     [&>section>p]:text-white
     [&>section>p]:mr-4
@@ -49,11 +49,11 @@ export function Main({ children }: any) {
     max-w-screen-lg w-full mx-auto
     px-10 pb-24
     break-words
-    my-auto
+    pt-8
 
-    [&_[data-dialog]]:max-w-sm
-    [&_[data-dialog]]:m-auto
-    [&_[data-dialog]]:my-auto
+    [&_h2]:opacity-20
+    [&_h2]:font-normal
+    [&_h2]:text-xl
   ">
     { children }
   </main>

@@ -6,7 +6,8 @@ import { Form } from "@/component/form"
 import { Navigation } from "@/lib/error"
 
 export default async function Page({ searchParams }: any) {
-  const session = await getCurrentSession()
+  
+  const session = await Authentication.requireSession()
 
   async function verifyAction() {
     "use server"
@@ -36,56 +37,62 @@ export default async function Page({ searchParams }: any) {
   }
 
 
-  return <>
-    <AuthGuard />
+  return <section className="max-w-screen-sm mx-auto">
     <a href="/">{ '<- Back' }</a>
+    <h1>Settings</h1>
 
-    <h2>Settings</h2>
-
-    <Form sp={ searchParams }>
+    <Form sp={ searchParams } className="
+      [&>section]:mb-16
+      [&>section>section]:flex
+      [&>section>section]:justify-between
+      [&>section>section]:items-center
+      [&>section>section]:gap-2
+      [&>section>h2]:mb-4
+    ">
       <section>
 
-        <h3>Account</h3>
+        <h2>Account</h2>
 
         <IfNotVerified>
-          <section data-inline-between>
+          <section>
             <p>Your email is not verified. Please verify your email</p>
             <button type="submit" formAction={ verifyAction }>Verify Email</button>
           </section>
         </IfNotVerified>
 
-        <section data-inline-between>
+        <section>
           <p>Delete Account <br /><IfNotVerified><span className="opacity-20">Please verify your email to delete account</span></IfNotVerified></p>
           <IfVerified><button data-destructive formAction={ deleteUserAction }>Delete Account</button></IfVerified>
         </section>
 
-        <section data-inline-between>
+        <section>
           <p>Change Password <br /><IfNotVerified><span className="opacity-20">Please verify your email to change password</span></IfNotVerified></p>
-          <IfVerified><a href="/changepassword">Change Password</a></IfVerified>
+          <IfVerified><a href="/settings/changepassword">Change Password</a></IfVerified>
         </section>
 
-        <section data-inline-between>
+        <section>
           <p>Log out</p>
           <button formAction={ logoutAction }>Log out</button>
         </section>
 
       </section>
-      <section className="mt-8">
 
-        <h3>Profile</h3>
+      <section>
 
-        <section data-inline-between>
+        <h2>Profile</h2>
+
+        <section>
           <p>Username <br /><span className="opacity-60 leading-loose">{ session?.username }</span></p>
           <button type="submit">Edit username</button>
         </section>
 
-        <section data-inline-between>
+        <section>
           <p>Email <br /><span className="opacity-60 leading-loose">{ session?.email }</span></p>
           <button type="submit">Edit email</button>
         </section>
       </section>
 
     </Form >
-  </>
+  </section>
 }
 

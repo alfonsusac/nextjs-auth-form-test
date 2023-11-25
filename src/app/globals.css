@@ -42,9 +42,6 @@ h1{
 h2{
   font-size: 1.8rem; font-weight: 600; letter-spacing: -0.25px; 
 }
-h3{
-  font-size: 1rem; font-weight: 400; opacity: 0.2 ;
-}
 hr {
   opacity: 0.1;
 }
@@ -60,6 +57,7 @@ a, button, button[type=submit] {
   text-decoration: none;
 
   cursor: pointer;
+  flex-shrink: 0;
 }
 a:hover, button:hover {
   background-color: #fff1;
@@ -91,11 +89,7 @@ div[data-callout-success]{
   background-color: rgba(51, 255, 102, 0.133);
   margin-block: 1rem;
 }
-section[data-inline-between]{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+
 pre{
   /* white-space: unset; */
   white-space-trim: 5;

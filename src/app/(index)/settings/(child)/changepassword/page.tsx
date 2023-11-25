@@ -24,7 +24,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
 
   if (await LoggedInUser.usingMagicLink())
     return <>
-      <h2>Change Password</h2>
+      <h1>Change Password</h1>
       <p>You do not have a password when registered using Magic links.</p>
       <br />
       <a href="/settings/createpassword" data-primary>Create Password</a>
@@ -32,7 +32,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
 
   if (!await LoggedInUser.isVerified()) {
     return <>
-      <h2>Change Password</h2>
+      <h1>Change Password</h1>
       <p>You need to verify your email before changing your password</p>
       <Form sp={ searchParams }>
         <button type="submit" formAction={ async () => {
@@ -49,7 +49,7 @@ export default async function ChangePasswordPage({ searchParams }: any) {
 
 
   return <>
-    <h2>Change Password</h2>
+    <h1>Change Password</h1>
     <Form sp={ searchParams }>
       <Input { ...form.fields.oldPassword.attributes } label={ form.fields.oldPassword.label } />
       <Input { ...form.fields.newPassword.attributes } label={ form.fields.newPassword.label } />

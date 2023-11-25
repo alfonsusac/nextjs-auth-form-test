@@ -99,7 +99,7 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
 
     </IfNotLoggedIn>
     <IfLoggedIn>
-      <h2>To-do</h2>
+      <h1>To-do</h1>
       You are doing great! Keep it up!
     </IfLoggedIn>
   </Form>
