@@ -7,7 +7,10 @@ import { SVGProps } from "react"
 
 export default function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
-  return <Form sp={ searchParams }>
+  return <Form sp={ searchParams } className="
+  [&_h2]:text-2xl
+  [&_h2]:opacity-100
+  ">
     <IfNotLoggedIn>
       <section>
 
@@ -23,7 +26,8 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
       </section>
 
       <section className="mt-24">
-        <header className=" mb-8">
+        
+        <header className="mb-8">
           <h2 className="text-center">Features & Concepts</h2>
           <p className="text-center">All the features and concepts used for this learning project</p>
         </header>

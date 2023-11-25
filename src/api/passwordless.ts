@@ -1,25 +1,6 @@
 import { User } from "@/model/user"
-import { EmailVerification } from "./verification"
-import { JWTCookieHandler } from "@/lib/jwt"
-import { redirectTo } from "@/lib/error"
 import { UserJWTCookie } from "./authentication"
-
-export namespace Verifications{
-  export const passwordlessVerification = new EmailVerification<{
-    email: string
-  }>(
-    "passwordless",
-    "1d",
-    "Magic one-time use link authentication",
-    (url) => `Hi! One time login link: ${url}`,
-    "/passwordless/verify",
-  )
-}
-const passwordlessSetupCookie = new JWTCookieHandler<{ email: string }>(
-  "alfon-auth-temp-passwordless",
-  "1d",
-)
-
+import { Verifications } from "./globals"
 
 
 /** ========================================================================================

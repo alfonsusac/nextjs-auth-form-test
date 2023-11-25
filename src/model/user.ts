@@ -52,6 +52,42 @@ export namespace User {
       return await prisma.user.delete({ where: { username, email } })
     })
 
+  export const updateUsername = cache(
+    async function (username: string, email: string, newUsername: string) {
+      try {
+        await prisma.user.update({
+          where: {
+            email, username
+          },
+          data: {
+            username: newUsername,
+          }
+        })
+      } catch (error) {
+        PrismaUtil.throwIfConstraintError(error, "username", "Username")
+        throw error
+      }
+    }
+  )
+
+  export const changeEmail = cache(
+    async function (username: string, email: string, newEmail: string) {
+      try {
+        await prisma.user.update({
+          where: {
+            email, username
+          },
+          data: {
+            email: newEmail
+          }
+        })
+      } catch (error) {
+        PrismaUtil.throwIfConstraintError(error, "email", "Email")
+        throw error
+      }
+    }
+  )
+
 }
 
 

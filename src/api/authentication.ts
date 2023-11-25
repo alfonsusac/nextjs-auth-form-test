@@ -7,6 +7,7 @@ import { User } from "@/model/user"
 import { Password } from "@/model/password"
 import { ClientErrorBaseClass, ClientError } from "@/lib/error/class"
 import { Navigation, redirectTo } from "@/lib/error"
+import { Verifications } from "./globals"
 
 
 /** ========================================================================================
@@ -31,17 +32,6 @@ export const UserJWTCookie = new JWTCookieHandler
       verified: boolean
     }
   >("alfon-auth", "24 h")
-
-
-export namespace Verifications {
-  export const forgotPassword = new EmailVerification<{
-    username: string
-  }>("forgotpassword", "1d",
-    "One-time link to reset password",
-    (url) => `Reset your password here: ${url}`,
-    "/forgotpassword/reset",
-  )
-}
 
 /** ========================================================================================
 *
@@ -128,7 +118,7 @@ export namespace Authentication {
     })
   }
 
-
+  
   export const getSession = cache(async function () {
     const payload = await UserJWTCookie.getCookieAndDecode()
     return payload

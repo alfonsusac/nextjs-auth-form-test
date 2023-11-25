@@ -19,7 +19,7 @@ export default async function PasswordlessRegisterPage({ searchParams }: { searc
 
   return (
     <>
-      <h2>Create Username</h2>
+      <h1>Create Username</h1>
       <p>for email: { session.email }</p>
       <form>
         <Input { ...passwordlessRegisterForm.fields.username.attributes } label={ passwordlessRegisterForm.fields.username.label } />

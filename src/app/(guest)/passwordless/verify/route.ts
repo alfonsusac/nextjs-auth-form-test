@@ -1,5 +1,5 @@
 import { UserJWTCookie } from "@/api/authentication"
-import { Verifications } from "@/api/passwordless"
+import { Verifications } from "@/api/globals"
 import { redirectTo } from "@/lib/error"
 import { User } from "@/model/user"
 import { UserVerification } from "@/model/verification"

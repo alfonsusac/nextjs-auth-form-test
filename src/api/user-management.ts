@@ -1,4 +1,4 @@
-import { Authentication } from "./authentication"
+import { Authentication, UserJWTCookie } from "./authentication"
 import { Cryptography } from "@/lib/crypto"
 import { User } from "@/model/user"
 import { Password } from "@/model/password"
@@ -10,7 +10,6 @@ import { ClientError } from "@/lib/error/class"
 
 
 export namespace LoggedInUser {
-
   export async function getUser() {
     const { username } = await Authentication.requireSession()
     const user = await User.findUsername(username)
@@ -20,7 +19,6 @@ export namespace LoggedInUser {
     }
     return user
   }
-
   export async function isVerified() {
     const user = await Authentication.requireSession()
     return user.verified
@@ -53,7 +51,22 @@ export namespace AccountManagement {
     await Password.update(username, storedPassword.value, hashedNewPassword)
   }
 
+  export async function changeUsername({ oldUsername, newUsername, email }: { oldUsername: string, newUsername: string, email: string }) {
+    await User.updateUsername(oldUsername, email, newUsername)
+    await UserJWTCookie.updateJWTandSetCookie((token) => {
+      token.username = newUsername
+      return token
+    })
+  }
 
+
+  export async function changeEmail({ username, oldEmail, newEmail }: { username: string, oldEmail: string, newEmail: string }) {
+    await User.changeEmail(username, oldEmail, newEmail)
+    await UserJWTCookie.updateJWTandSetCookie((token) => {
+      token.email = newEmail
+      return token
+    })
+  }
 
 }
 

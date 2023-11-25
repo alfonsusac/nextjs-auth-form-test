@@ -10,7 +10,8 @@ datasource db {
 }
 
 model User {
-  username     String            @id
+  // userid       String            @id
+  username     String            @unique
   email        String            @unique
   provider     String // "password" | "magiclink"
   password     UserPassword?
@@ -34,6 +35,6 @@ model UserVerification {
 }
 
 model VerificationToken {
-  id      String   @id @default(uuid())
-  expiry  DateTime
+  id     String   @id @default(uuid())
+  expiry DateTime
 }

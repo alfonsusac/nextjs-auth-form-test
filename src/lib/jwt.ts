@@ -1,16 +1,15 @@
 import { EncryptJWT, JWTPayload, jwtDecrypt } from "jose"
 import { Cryptography } from "./crypto"
-import { StringValue } from "@/../ms/dist"
+import ms, { StringValue } from "@/../ms/dist"
 import { Cookie } from "./cookies"
+import * as jose from "jose"
+import { ClientError } from "./error/class"
 
 // Date.now()             returns timestamp in milliseconds
 // Date.now() / 1000      divides by 1000, returns float
 // Date.now() / 1000 | 0  removes decimal points
 const thisSecond = () => (Date.now() / 1000) | 0
-
-
 const encryptionSecretDefault = "EncryptionKey"
-
 
 /**
  * Encode payload to jwt
@@ -94,18 +93,20 @@ export class JWTCookieHandler<Payload extends {}>{
     this.cookie = Cookie.create(cookieName, {
       secure: true,
       httpOnly: true,
-      sameSite: "lax"
+      sameSite: "lax",
+      maxAge: ms(durationStringInSeconds)/1000,
     })
   }
 
   async encodeAndSetCookie(payload: Payload) {
 
     console.log("Encode payload to JWT and set as cookie")
+    // console.log(payload)
     const token = await this.jwt.encode(payload)
+    console.log(token)
     this.cookie.set(token)
 
   }
-
 
   async getCookieAndDecode() {
 
@@ -119,11 +120,32 @@ export class JWTCookieHandler<Payload extends {}>{
       return session
     }
     catch (error) {
+      if (error instanceof jose.errors.JWTExpired) {
+        console.log("JWT Expired")
+        try {
+          this.cookie.delete()
+        } catch { }
+        return null
+      }
       console.log("Error Reading Cookie")
       console.error(error)
+
       this.cookie.delete()
       return null
     }
+
+  }
+
+  async updateJWTandSetCookie(
+    getNewJWT: (old: (Payload & JWTPayload)) => Payload
+  ) {
+
+    console.log("Update payload to JWT and set as cookie")
+    const payload = await this.getCookieAndDecode()
+    if (!payload) ClientError.notAuthenticated()
+    const newPayload = getNewJWT(payload)
+    // console.log(newPayload)
+    await this.encodeAndSetCookie(newPayload)
 
   }
 
