@@ -1,67 +1,44 @@
-import { RequestCookie, ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies"
 import { cookies } from "next/headers"
+import { logger } from "./logger"
+import { RequestCookie, ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies"
 
-
-
-
-
-export type Cookie = {
-  get(): RequestCookie | undefined
-  getAll(): RequestCookie[]
-  has(): boolean
-  set(value: string): ResponseCookies
-  readOnly: ReadOnlyCookie
-  delete(): ResponseCookies
-  tryDelete(): ResponseCookies | undefined
-}
+const log = logger("Cookie ", "yellow")
 export type ReadOnlyCookie = {
-  get(): string | undefined
+  get: () => (string | undefined),
+  getAll: () => (RequestCookie[]),
+  has: () => (boolean)
 }
+export class Cookie {
+  constructor(
+    readonly key: string,
+    readonly defaultOptions?: Omit<ResponseCookie, "name" | "value">
+  ) { }
 
-cookies().set("", "", {
-  
-})
-
-export namespace Cookie {
-  export function create(
-    key: string,
-    defaultOptions?: {
-      domain?: string
-      expires?: number | Date
-      httpOnly?: boolean
-      maxAge?: number
-      path?: string
-      priority?: "high" | "low" | "medium"
-      sameSite?: true | false | "lax" | "strict" | "none"
-      secure?: boolean,
+  get() {
+    return cookies().get(this.key)?.value
+  }
+  getAll() {
+    return cookies().get(this.key)
+  }
+  has() {
+    return cookies().has(this.key)
+  }
+  set(value: string) {
+    return cookies().set(this.key, value, this.defaultOptions)
+  }
+  delete() {
+    try {
+      return cookies().delete(this.key)
+    } catch (error) {
+      log("delete error")
+      console.log(error)
     }
-  ): Cookie {
+  }
+  get readOnly(): ReadOnlyCookie {
     return {
-      get() {
-        return cookies().get(key)
-      },
-      getAll() {
-        return cookies().getAll(key)
-      },
-      has() {
-        return cookies().has(key)
-      },
-      set(value) {
-        return cookies().set(key, value, defaultOptions)
-      },
-      readOnly: {
-        get: () => {
-          return cookies().get(key)?.value
-        }
-      },
-      delete() {
-        return cookies().delete(key)
-      },
-      tryDelete() {
-        try {
-          return cookies().delete(key)
-        } catch (error) { }
-      }
+      get: () => cookies().get(this.key)?.value,
+      getAll: () => cookies().getAll(this.key),
+      has: () => cookies().has(this.key)
     }
   }
 }

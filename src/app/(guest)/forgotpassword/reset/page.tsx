@@ -4,7 +4,7 @@ import { InvalidSearchParam } from "@/api/verification"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { Navigation } from "@/lib/error"
-import { JWTType } from "@/lib/jwt"
+import { JWTHandler } from "@/lib/jwt"
 import { createForm } from "@/lib/validations/formData"
 
 const form = createForm({
@@ -18,7 +18,7 @@ const form = createForm({
     required: ""
   }
 })
-const resetPasswordToken = new JWTType<{ username: string }>("1h")
+const resetPasswordToken = new JWTHandler<{ username: string }>("1h")
 export const dynamic = 'force-dynamic'
 export default async function ResetPassword({ searchParams }: any) {
 
@@ -58,12 +58,7 @@ export default async function ResetPassword({ searchParams }: any) {
     </>
 
   } catch (error) {
-    if (error instanceof InvalidSearchParam) {
-      Navigation.redirectTo('/')
-    }
-    console.log("Error verifying incoming request")
-    console.log(error)
-    Navigation.redirectTo('/forgotpassword', 'error=Verification Failed. Please try again')
+    Navigation.handleVerificationRouteError(error, '/forgotpassword')
   }
 
 }

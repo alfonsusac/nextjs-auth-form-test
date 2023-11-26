@@ -1,8 +1,8 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Request } from "./request"
 import * as NextNavigation from "next/navigation"
 import { headers } from "next/headers"
 import { ClientErrorBaseClass } from "./error/class"
+import { InvalidSearchParam } from "@/api/verification"
 
 
 export function redirectTo(path: string | undefined, query?: string): never {
@@ -47,6 +47,20 @@ export namespace Navigation {
       errorMessage(error.clientMessage)
 
     unknownError(error)
+  }
+  export function handleVerificationRouteError(error: any, redirectTo: string) {
+    if (error.message === "NEXT_REDIRECT") {
+      throw error
+    }
+    if (error instanceof InvalidSearchParam) {
+      Navigation.redirectTo('/')
+    }
+    if (error instanceof ClientErrorBaseClass) {
+      Navigation.redirectTo(redirectTo, `error=${error.message}`)
+    }
+    console.log("Error verifying incoming request")
+    console.log(error)
+    Navigation.redirectTo(redirectTo, 'error=Verification Failed. Please try again')
   }
 
 

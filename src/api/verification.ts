@@ -1,4 +1,4 @@
-import { JWTType } from "@/lib/jwt"
+import { JWTHandler } from "@/lib/jwt"
 import { Request } from "@/lib/request"
 import { Email } from "@/lib/email"
 import ms, { StringValue } from "@/lib/ms"
@@ -6,6 +6,8 @@ import { DB, UserVerification } from "@/model/verification"
 import { logger } from "@/lib/logger"
 import { ClientErrorBaseClass } from "@/lib/error/class"
 import { development, production } from "@/lib/env"
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import { PrismaUtil } from "@/model"
 
 /** ========================================================================================
 *
@@ -17,8 +19,8 @@ import { development, production } from "@/lib/env"
 /** 
  *  Verification JWT Object
  */
-export const verificationJWT = new JWTType<{ verification: string }>("24 h")
-export const passwordlessVerificationJWT = new JWTType<{ verification: string, email: string }>("24 h")
+export const verificationJWT = new JWTHandler<{ verification: string }>("24 h")
+export const passwordlessVerificationJWT = new JWTHandler<{ verification: string, email: string }>("24 h")
 
 /** ========================================================================================
 *
@@ -111,7 +113,7 @@ export class EmailVerification<
 > {
 
   private readonly verificationJWT
-    = new JWTType<
+    = new JWTHandler<
       VerificationJWTPayload<Data>
     >(this.duration)
 
@@ -174,11 +176,16 @@ export class EmailVerification<
     if (!purpose) throw new InvalidSearchParam("Purpose not provided")
     if (!key) throw new InvalidSearchParam("Key not provided")
 
-    const payload = await JWTType.decode<VerificationJWTPayload<Data>>(key)
+    const payload = await JWTHandler.decode<VerificationJWTPayload<Data>>(key)
 
     const payloadKey = payload.verification
 
-    await DB.VerificationToken.verify({ id: payloadKey })
+    try {
+      await DB.VerificationToken.verify({ id: payloadKey })
+    } catch (error: any) {
+      PrismaUtil.throwIfRecordNotFound(error, "Verification token has expired. Please try again.")
+      throw error
+    }
 
     return payload.data as Data
   }

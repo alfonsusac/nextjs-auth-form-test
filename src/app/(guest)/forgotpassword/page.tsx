@@ -27,7 +27,7 @@ export default function ForgotPassword({ searchParams }: any) {
             "use server"
             try {
               const { email } = form.validate(formData)
-              await Authentication.sendForgotPasswordEmail({ email })
+              await Authentication.requestForgotPassword({ email })
               Navigation.success('An email is sent to reset your password!')
             }
             catch (error: any) {

@@ -1,11 +1,21 @@
+
+
+import ms, { ExpiryDate } from "@/lib/ms"
 import { EmailVerification } from "./verification"
+
+export namespace Config {
+  export const emailExpiration = new ExpiryDate("1d")
+
+
+}
+
+
 
 export namespace Verifications {
   export const passwordlessVerification = new EmailVerification<{
     email: string
   }>(
-    "passwordless",
-    "1d",
+    "passwordless", "1d",
     "Magic one-time use link authentication",
     (url) => `Hi! One time login link: ${url}`,
     "/passwordless/verify",

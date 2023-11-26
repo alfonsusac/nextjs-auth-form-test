@@ -1,4 +1,3 @@
-import { emailVerificationExpiryDate } from "@/api/authentication"
 import prisma from "@/lib/singleton"
 import { cache } from "react"
 import { PrismaUtil } from "."
@@ -70,7 +69,7 @@ export namespace User {
     }
   )
 
-  export const changeEmail = cache(
+  export const updateEmail = cache(
     async function (username: string, email: string, newEmail: string) {
       try {
         await prisma.user.update({

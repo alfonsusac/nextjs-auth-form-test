@@ -1,9 +1,9 @@
 import { EncryptJWT, JWTPayload, jwtDecrypt, errors as joseErrors } from "jose"
 import { Cryptography } from "./crypto"
 import ms, { StringValue } from "@/../ms/dist"
-import { Cookie } from "./cookies"
 import { ClientError } from "./error/class"
 import { logger } from "./logger"
+import { Cookie } from "./cookies"
 
 // Date.now()             returns timestamp in milliseconds
 // Date.now() / 1000      divides by 1000, returns float
@@ -17,7 +17,7 @@ const logjwtcookie = logger("JWTCookie ", "grey")
 
 type PayloadType = { [key: string]: any }
 
-export class JWTType<Payload extends PayloadType> {
+export class JWTHandler<Payload extends PayloadType> {
   constructor(
     readonly durationStringInSeconds: StringValue
   ) { }
@@ -36,7 +36,7 @@ export class JWTType<Payload extends PayloadType> {
    * Decode incoming jwt
    */
   async decode(jwt: string) {
-    return await JWTType.decode<Payload>(jwt)
+    return await JWTHandler.decode<Payload>(jwt)
   }
   static async decode<Payload extends PayloadType = JWTPayload>(jwt: string) {
     const encryptionSecret = await Cryptography.getEncryptionKey(encryptionSecretDefault)
@@ -49,15 +49,15 @@ export class JWTType<Payload extends PayloadType> {
 
 
 
-export class JWTCookieType<Payload extends {}>{
-  readonly jwt: JWTType<Payload>
+export class JWTCookieHandler<Payload extends {}>{
+  readonly jwt: JWTHandler<Payload>
   readonly cookie: Cookie
   constructor(
     cookieName: string,
     durationStringInSeconds: StringValue
   ) {
-    this.jwt = new JWTType(durationStringInSeconds)
-    this.cookie = Cookie.create(cookieName, {
+    this.jwt = new JWTHandler(durationStringInSeconds)
+    this.cookie = new Cookie(cookieName, {
       secure: true,
       httpOnly: true,
       sameSite: "lax",
@@ -73,7 +73,7 @@ export class JWTCookieType<Payload extends {}>{
 
   async getCookieAndDecode() {
     logjwtcookie("Get cookie from request and decode cookie")
-    const rawCookie = this.cookie.readOnly.get()
+    const rawCookie = this.cookie.get()
     if (!rawCookie) {
       logjwtcookie("Auth Cookie not Found")
       return null
@@ -90,7 +90,7 @@ export class JWTCookieType<Payload extends {}>{
         logjwtcookie("Error Reading Cookie")
       }
       console.error(error)
-      this.cookie.tryDelete()
+      this.cookie.delete()
       return null
     }
   }
@@ -103,6 +103,6 @@ export class JWTCookieType<Payload extends {}>{
     await this.encodeAndSetCookie(getNewJWT(payload))
   }
   deleteCookie() {
-    this.cookie.tryDelete()
+    this.cookie.delete()
   }
 }

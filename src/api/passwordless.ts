@@ -1,6 +1,6 @@
 import { User } from "@/model/user"
-import { UserJWTCookie } from "./authentication"
 import { Verifications } from "./globals"
+import { Session } from "./session"
 
 
 /** ========================================================================================
@@ -33,7 +33,7 @@ export async function registerPasswordless(username: string, email: string) {
   if (!user) {
     throw new Error('User is unexpectedly created? ')
   }
-  await UserJWTCookie.encodeAndSetCookie({
+  await Session.create({
     username: user.username,
     email: user.email,
     verified: true,

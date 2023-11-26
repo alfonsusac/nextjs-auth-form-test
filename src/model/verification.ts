@@ -1,4 +1,4 @@
-import { emailVerificationExpiryDate } from "@/api/authentication"
+import { Config } from "@/api/globals"
 import prisma from "@/lib/singleton"
 import { cache } from "react"
 
@@ -11,7 +11,7 @@ export namespace DB {
         return await prisma.verificationToken.create({
           data: {
             purpose: data.purpose,
-            expiry: new Date(Date.now() + data.expiryDurationMilisecond)
+            expiry: Config.emailExpiration.getDate()
           }
         })
       }
@@ -52,10 +52,10 @@ export namespace UserVerification {
       },
       create: {
         username,
-        expiry: emailVerificationExpiryDate()
+        expiry: Config.emailExpiration.getDate()
       },
       update: {
-        expiry: emailVerificationExpiryDate()
+        expiry: Config.emailExpiration.getDate()
       }
     })
   })

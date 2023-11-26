@@ -1,6 +1,6 @@
-import { UserJWTCookie } from "@/api/authentication"
 import { Verifications } from "@/api/globals"
-import { redirectTo } from "@/lib/error"
+import { Session } from "@/api/session"
+import { Navigation, redirectTo } from "@/lib/error"
 import { User } from "@/model/user"
 import { UserVerification } from "@/model/verification"
 import { NextRequest } from "next/server"
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const user = await User.findEmail(data.email)
 
     if (!user) {
-      await UserJWTCookie.encodeAndSetCookie({
+      await Session.create({
         username: "",
         email: data.email,
         verified: true,
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       await UserVerification.verifyKey(verification.id)
     }
 
-    await UserJWTCookie.encodeAndSetCookie({
+    await Session.create({
       username: user.username,
       email: user.email,
       verified: true,
@@ -37,10 +37,7 @@ export async function GET(request: NextRequest) {
     
   }
   catch (error: any) {
-    if (error.message === "NEXT_REDIRECT") throw error
-
-    console.log(error)
-    redirectTo('/passwordless/register', 'error=Verification failed! Please try again.')
+    Navigation.handleVerificationRouteError(error, '/passwordless/register')
   }
 
 }

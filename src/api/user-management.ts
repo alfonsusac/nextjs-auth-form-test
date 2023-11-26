@@ -1,9 +1,10 @@
-import { Authentication, UserJWTCookie } from "./authentication"
+import { Authentication } from "./authentication"
 import { Cryptography } from "@/lib/crypto"
 import { User } from "@/model/user"
 import { Password } from "@/model/password"
 import { Navigation } from "@/lib/error"
 import { ClientError } from "@/lib/error/class"
+import { Session } from "./session"
 
 
 
@@ -53,7 +54,7 @@ export namespace AccountManagement {
 
   export async function changeUsername({ oldUsername, newUsername, email }: { oldUsername: string, newUsername: string, email: string }) {
     await User.updateUsername(oldUsername, email, newUsername)
-    await UserJWTCookie.updateJWTandSetCookie((token) => {
+    await Session.update(token => {
       token.username = newUsername
       return token
     })
@@ -61,8 +62,8 @@ export namespace AccountManagement {
 
 
   export async function changeEmail({ username, oldEmail, newEmail }: { username: string, oldEmail: string, newEmail: string }) {
-    await User.changeEmail(username, oldEmail, newEmail)
-    await UserJWTCookie.updateJWTandSetCookie((token) => {
+    await User.updateEmail(username, oldEmail, newEmail)
+    await Session.update(token => {
       token.email = newEmail
       return token
     })

@@ -1,5 +1,5 @@
 import { Cookie, ReadOnlyCookie } from "../cookies"
-import { ClientError, ClientErrorBaseClass } from "../error/class"
+import { ClientError } from "../error/class"
 import { ValidatorOptions } from "./fieldBuilder"
 import { Field, ValidationError } from "./validator"
 
@@ -32,7 +32,7 @@ export function createForm<FormShape extends { [key: string]: ValidatorOptions }
 
     // set defaultvalue cookie
     if (!fieldDesc.file && fieldDesc.persistValue) {
-      const cookie = Cookie.create(fieldName)
+      const cookie = new Cookie(fieldName)
       defaultFieldValueCookies[fieldName] = cookie as any
       defaultFieldValueReadOnlyCookies[fieldName] = cookie.readOnly as any
     }

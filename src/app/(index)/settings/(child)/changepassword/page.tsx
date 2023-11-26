@@ -1,4 +1,4 @@
-import { Authentication } from "@/api/authentication"
+import { AuthGuard, Authentication } from "@/api/authentication"
 import { LoggedInUser, AccountManagement } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { Form } from "@/component/form"
@@ -31,22 +31,8 @@ export default async function ChangePasswordPage({ searchParams }: any) {
     </>
 
   if (!await LoggedInUser.isVerified()) {
-    return <>
-      <h1>Change Password</h1>
-      <p>You need to verify your email before changing your password</p>
-      <Form sp={ searchParams }>
-        <button type="submit" formAction={ async () => {
-
-          "use server"
-          const session = await Authentication.requireSession()
-          await sendEmailVerification(session.username, session.email)
-          Navigation.success('Email sent! Check your email to verify')
-
-        } }>Verify</button>
-      </Form>
-    </>
+    Navigation.notVerified()
   }
-
 
   return <>
     <h1>Change Password</h1>

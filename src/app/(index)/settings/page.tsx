@@ -1,4 +1,5 @@
 import { Authentication, getCurrentSession } from "@/api/authentication"
+import { Verifications } from "@/api/globals"
 import { AccountManagement } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { AuthGuard, IfNotVerified, IfVerified } from "@/component/authentication"
@@ -62,7 +63,12 @@ export default async function Page({ searchParams }: any) {
       if (!email) ClientError.invalidInput('Email is required')
       const session = await Authentication.requireSession()
       if (email === session.email) return
-      // await AccountManagement.changeUsername({ email: session.email, newUsername: email })
+
+      await Verifications.changeEmail.send(session.email, {
+        username: session.username,
+        email: email
+      })
+      
       Navigation.success("Verification Link sent to new email! Please check your new email to change your email.")
     } catch (error) {
       Navigation.handleFormError(error)
@@ -133,10 +139,16 @@ export default async function Page({ searchParams }: any) {
             Email <br />
           </label>
 
-          <section className="flex flex-row gap-4 w-full">
-            <input name="username" defaultValue={ session.email } />
-            <button type="submit" formAction={ changeUsernameAction }>Change email</button>
-          </section>
+          <IfVerified>
+            <section className="flex flex-row gap-4 w-full">
+              <input name="email" defaultValue={ session.email } />
+              <button type="submit" formAction={ changeEmailAction }>Change email</button>
+            </section>
+          </IfVerified>
+          <IfNotVerified>
+            <p>{ session.email }</p>
+            <span className="opacity-20">Please verify your email to change email</span>
+          </IfNotVerified>
 
         </section>
 

@@ -23,7 +23,7 @@ export namespace Cryptography {
   const log = logger("Cryptography ", "grey")
   
   // Change hashing algorithm here
-  const hasher = new Argon2idHasher()
+  const hasher: Hasher = new Argon2idHasher()
 
   export async function hash(input: string) {
     log("Hashing input")
