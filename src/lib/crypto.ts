@@ -43,7 +43,7 @@ export namespace Cryptography {
    * This allows for a more tailored security solution.
  */
   export async function getEncryptionKey(sourceKey: string) {
-    log("Getting Encryption Key")
+    // log("Getting Encryption Key")
     const digest = "sha256"
     const ikm = sourceKey
     const salt = ""

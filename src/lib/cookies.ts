@@ -1,6 +1,10 @@
 import { RequestCookie, ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies"
 import { cookies } from "next/headers"
 
+
+
+
+
 export type Cookie = {
   get(): RequestCookie | undefined
   getAll(): RequestCookie[]
@@ -8,10 +12,15 @@ export type Cookie = {
   set(value: string): ResponseCookies
   readOnly: ReadOnlyCookie
   delete(): ResponseCookies
+  tryDelete(): ResponseCookies | undefined
 }
 export type ReadOnlyCookie = {
   get(): string | undefined
 }
+
+cookies().set("", "", {
+  
+})
 
 export namespace Cookie {
   export function create(
@@ -25,12 +34,8 @@ export namespace Cookie {
       priority?: "high" | "low" | "medium"
       sameSite?: true | false | "lax" | "strict" | "none"
       secure?: boolean,
-
-      signed?: boolean
     }
   ): Cookie {
-    const { ...defaultCookieOption } = defaultOptions ?? {}
-
     return {
       get() {
         return cookies().get(key)
@@ -42,7 +47,7 @@ export namespace Cookie {
         return cookies().has(key)
       },
       set(value) {
-        return cookies().set(key, value, defaultCookieOption)
+        return cookies().set(key, value, defaultOptions)
       },
       readOnly: {
         get: () => {
@@ -51,6 +56,11 @@ export namespace Cookie {
       },
       delete() {
         return cookies().delete(key)
+      },
+      tryDelete() {
+        try {
+          return cookies().delete(key)
+        } catch (error) { }
       }
     }
   }

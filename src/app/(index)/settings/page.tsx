@@ -44,7 +44,11 @@ export default async function Page({ searchParams }: any) {
       if (!username) ClientError.invalidInput('Username is required')
       const session = await Authentication.requireSession()
       if (username === session.username) return
-      await AccountManagement.changeUsername({ email: session.email, newUsername: username })
+      await AccountManagement.changeUsername({
+        email: session.email,
+        newUsername: username,
+        oldUsername: session.username
+      })
       Navigation.success("Username successfully changed")
     } catch (error) {
       Navigation.handleFormError(error)
@@ -135,7 +139,7 @@ export default async function Page({ searchParams }: any) {
           </section>
 
         </section>
-        
+
       </section>
 
     </Form >

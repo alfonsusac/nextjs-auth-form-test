@@ -1,12 +1,10 @@
 import { Cryptography } from "@/lib/crypto"
-import { JWTCookieHandler } from "@/lib/jwt"
+import { JWTCookieType } from "@/lib/jwt"
 import { cache } from "react"
-import { Cookie } from "@/lib/cookies"
-import { EmailVerification } from "./verification"
 import { User } from "@/model/user"
 import { Password } from "@/model/password"
-import { ClientErrorBaseClass, ClientError } from "@/lib/error/class"
-import { Navigation, redirectTo } from "@/lib/error"
+import { ClientError } from "@/lib/error/class"
+import { Navigation } from "@/lib/error"
 import { Verifications } from "./globals"
 
 
@@ -24,7 +22,7 @@ export const emailVerificationExpiryDate = () => new Date(Date.now() + duration2
 /** 
  *  User JWT Object
  */
-export const UserJWTCookie = new JWTCookieHandler
+export const UserJWTCookie = new JWTCookieType
   <
     {
       username: string
@@ -151,10 +149,6 @@ export namespace AuthGuard{
   }
   export async function usernamelessOnly() {
     const session = await Authentication.getSession()
-    console.log("User's username")
-    console.log(session?.username)
-    console.log("User's: " + !!session)
-    console.log("User's username: " + !!session?.username)
     if (!session)
       Navigation.redirectTo('/', 'error=Not Authenticated. Please log in again.')
     if (session.username)

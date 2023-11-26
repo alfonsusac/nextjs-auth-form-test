@@ -1,10 +1,11 @@
-import { JWTHandler } from "@/lib/jwt"
+import { JWTType } from "@/lib/jwt"
 import { Request } from "@/lib/request"
 import { Email } from "@/lib/email"
 import ms, { StringValue } from "@/lib/ms"
 import { DB, UserVerification } from "@/model/verification"
 import { logger } from "@/lib/logger"
 import { ClientErrorBaseClass } from "@/lib/error/class"
+import { development, production } from "@/lib/env"
 
 /** ========================================================================================
 *
@@ -16,8 +17,8 @@ import { ClientErrorBaseClass } from "@/lib/error/class"
 /** 
  *  Verification JWT Object
  */
-export const verificationJWT = new JWTHandler<{ verification: string }>("24 h")
-export const passwordlessVerificationJWT = new JWTHandler<{ verification: string, email: string }>("24 h")
+export const verificationJWT = new JWTType<{ verification: string }>("24 h")
+export const passwordlessVerificationJWT = new JWTType<{ verification: string, email: string }>("24 h")
 
 /** ========================================================================================
 *
@@ -110,7 +111,7 @@ export class EmailVerification<
 > {
 
   private readonly verificationJWT
-    = new JWTHandler<
+    = new JWTType<
       VerificationJWTPayload<Data>
     >(this.duration)
 
@@ -118,10 +119,8 @@ export class EmailVerification<
     readonly purpose: string,
     private readonly duration: StringValue,
     private readonly emailSubject: string,
-
     private readonly text:
       (url: string, context?: Context) => string,
-
     readonly redirectURL: string,
   ) { }
 
@@ -155,12 +154,18 @@ export class EmailVerification<
     verificationUrl.searchParams.set('purpose', this.purpose)
     verificationUrl.searchParams.set('key', signedToken)
 
-    const res = await Email.verifyViaEmail({
-      recipient: email,
-      subject: this.emailSubject,
-      text: this.text(verificationUrl.toString(), emailContext),
-    })
-    console.log(res)
+    if (production) {
+      await Email.verifyViaEmail({
+        recipient: email,
+        subject: this.emailSubject,
+        text: this.text(verificationUrl.toString(), emailContext),
+      })
+    }
+    if (development) {
+      console.log("Email:")
+      console.log(this.text(verificationUrl.toString(), emailContext))
+    }
+
     log("Token Sent")
   }
 
@@ -169,7 +174,7 @@ export class EmailVerification<
     if (!purpose) throw new InvalidSearchParam("Purpose not provided")
     if (!key) throw new InvalidSearchParam("Key not provided")
 
-    const payload = await JWTHandler.decode<VerificationJWTPayload<Data>>(key)
+    const payload = await JWTType.decode<VerificationJWTPayload<Data>>(key)
 
     const payloadKey = payload.verification
 

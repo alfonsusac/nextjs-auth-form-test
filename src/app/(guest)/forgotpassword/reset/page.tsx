@@ -4,7 +4,7 @@ import { InvalidSearchParam } from "@/api/verification"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { Navigation } from "@/lib/error"
-import { JWTHandler } from "@/lib/jwt"
+import { JWTType } from "@/lib/jwt"
 import { createForm } from "@/lib/validations/formData"
 
 const form = createForm({
@@ -18,7 +18,7 @@ const form = createForm({
     required: ""
   }
 })
-const resetPasswordToken = new JWTHandler<{ username: string }>("1h")
+const resetPasswordToken = new JWTType<{ username: string }>("1h")
 export const dynamic = 'force-dynamic'
 export default async function ResetPassword({ searchParams }: any) {
 
