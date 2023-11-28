@@ -1,4 +1,5 @@
 import chalk from "chalk"
+import { development } from "./env"
 
 const logColors = {
   "default": chalk.reset,
@@ -30,6 +31,7 @@ export function logger(prefix: string, color?: LoggerColors) {
   // console.log(chalk.yellow("Yellow"))
   // console.log(chalk.yellowBright("Yellow Bright"))
   return (o: any) => {
+    if(development)
     console.log(logColors[color ?? "blue"](prefix) + o)
   }
 }

@@ -38,7 +38,7 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
         [&_h3]:opacity-90
         [&_h3]:text-lg
         [&_h3]:font-medium
-        [&_h3]:leading-10
+        [&_h3]:mb-2
         ">
           <div>
             <h3>Password Hashing</h3>
@@ -117,12 +117,12 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
 
 
 
-export function LogosNextjsIcon(props: SVGProps<SVGSVGElement>) {
+function LogosNextjsIcon(props: SVGProps<SVGSVGElement>) {
   return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256" { ...props }><defs><linearGradient id="logosNextjsIcon0" x1="55.633%" x2="83.228%" y1="56.385%" y2="96.08%"><stop offset="0%" stopColor="#FFF"></stop><stop offset="100%" stopColor="#FFF" stopOpacity="0"></stop></linearGradient><linearGradient id="logosNextjsIcon1" x1="50%" x2="49.953%" y1="0%" y2="73.438%"><stop offset="0%" stopColor="#FFF"></stop><stop offset="100%" stopColor="#FFF" stopOpacity="0"></stop></linearGradient><circle id="logosNextjsIcon2" cx="128" cy="128" r="128"></circle></defs><mask id="logosNextjsIcon3" fill="#fff"><use href="#logosNextjsIcon2"></use></mask><g mask="url(#logosNextjsIcon3)"><circle cx="128" cy="128" r="128"></circle><path fill="url(#logosNextjsIcon0)" d="M212.634 224.028L98.335 76.8H76.8v102.357h17.228V98.68L199.11 234.446a128.433 128.433 0 0 0 13.524-10.418Z"></path><path fill="url(#logosNextjsIcon1)" d="M163.556 76.8h17.067v102.4h-17.067z"></path></g></svg>
 }
 
 
-export function SkillIconsPrisma(props: SVGProps<SVGSVGElement>) {
+function SkillIconsPrisma(props: SVGProps<SVGSVGElement>) {
   return <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256" { ...props }><g fill="none"><rect width="256" height="256" fill="#677EEB" rx="60"></rect><path fill="#F7FAFC" fillRule="evenodd" d="M52.658 165.183a9.385 9.385 0 0 1-.075-9.929L123.044 40.32c3.919-6.393 13.382-5.834 16.521.975l64.369 139.631c2.388 5.181-.361 11.277-5.826 12.917l-100.13 30.039a9.384 9.384 0 0 1-10.622-3.964l-34.698-54.735Zm78.515-91.257c.679-3.382 5.312-3.87 6.68-.703l44.401 102.74a3.518 3.518 0 0 1-2.224 4.768l-69.182 20.652c-2.543.759-4.979-1.463-4.456-4.065l24.781-123.392Z" clipRule="evenodd"></path></g></svg>
 }
 
@@ -146,7 +146,7 @@ async function delay(msecs: number) {
 }
 
 
-export function MdiGithub(props: SVGProps<SVGSVGElement>) {
+function MdiGithub(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" { ...props }><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33c.85 0 1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z"></path></svg>
   )
