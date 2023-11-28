@@ -1,11 +1,11 @@
 import prisma from "@/lib/singleton"
 import { cache } from "react"
 import { PrismaUtil } from "."
-import { UserPassword } from "./password"
+import { UserPassword } from "./userpassword"
 import { UserVerification } from "./verification"
 import { User2FA } from "./user2fa"
 
-type UserProvider = "password" | "magiclink"
+type UserProvider = "password" | "magiclink" | "webauthn"
 type IsUsingPassword<Provider extends UserProvider> = Provider extends "password" ? string : undefined
 
 export namespace User {

@@ -10,13 +10,14 @@ datasource db {
 }
 
 model User {
-  username     String            @id @unique
-  email        String            @unique
-  provider     String // "password" | "magiclink"
-  password     UserPassword?
-  verification UserVerification?
-  created_at   DateTime          @default(now())
-  User2FA      User2FA?
+  username       String            @id @unique
+  email          String            @unique
+  provider       String // "password" | "magiclink"
+  password       UserPassword?
+  verification   UserVerification?
+  created_at     DateTime          @default(now())
+  User2FA        User2FA?
+  UserDeviceAuth UserDeviceAuth[]
 }
 
 model UserPassword {
@@ -40,7 +41,22 @@ model User2FA {
   secret   String @unique
 }
 
+model UserDeviceAuth {
+  user      User   @relation(fields: [username], references: [username])
+  username  String @id @unique
+  challenge String @unique
+}
+
+model Authenticator {
+  credentialID         String  @id
+  credentialPublicKey  Bytes
+  counter              BigInt
+  credentialDeviceType String // 'singleDevice' | 'multiDevice'
+  credentialBackedUp   Boolean
+  transports           String? // ['usb' | 'ble' | 'nfc' | 'internal'] string array as csv string
+}
+
 model VerificationToken {
-  id      String   @id @default(uuid())
-  expiry  DateTime
+  id     String   @id @default(uuid())
+  expiry DateTime
 }

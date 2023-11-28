@@ -1,6 +1,6 @@
 import { Cryptography } from "@/lib/crypto"
 import { ClientError } from "@/lib/error/class"
-import { UserPassword } from "@/model/password"
+import { UserPassword } from "@/model/userpassword"
 import { User } from "@/model/user"
 import { User2FA } from "@/model/user2fa"
 import { LoginSession, Session } from "../session"

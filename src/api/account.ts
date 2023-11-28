@@ -1,7 +1,7 @@
 import { Authentication } from "./authentication"
 import { Cryptography } from "@/lib/crypto"
 import { User } from "@/model/user"
-import { UserPassword } from "@/model/password"
+import { UserPassword } from "@/model/userpassword"
 import { Navigation } from "@/lib/error"
 import { ClientError } from "@/lib/error/class"
 import { Session } from "./session"

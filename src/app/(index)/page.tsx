@@ -10,6 +10,7 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
   return <Form sp={ searchParams } className="
   [&_header>h2]:text-2xl
   [&_header>h2]:opacity-100
+  [&_header>h2]:font-semibold
   ">
     <IfNotLoggedIn>
       <section>
@@ -38,7 +39,7 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
         [&_h3]:opacity-90
         [&_h3]:text-lg
         [&_h3]:font-medium
-        [&_h3]:mb-2
+        [&_h3]:mb-1
         ">
           <div>
             <h3>Password Hashing</h3>

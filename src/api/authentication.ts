@@ -1,7 +1,7 @@
 import { Cryptography } from "@/lib/crypto"
 import { cache } from "react"
 import { User } from "@/model/user"
-import { UserPassword } from "@/model/password"
+import { UserPassword } from "@/model/userpassword"
 import { ClientError } from "@/lib/error/class"
 import { Navigation } from "@/lib/error"
 import { Verifications } from "./globals"

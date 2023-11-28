@@ -33,7 +33,8 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
       <a href="/forgotpassword">forgot password</a>
     </Form >
     <section className="opacity-40">or continue with</section>
-    <a data-primary href="/passwordless" className="w-full text-center">Login without Password</a>
+    <a data-primary href="/passwordless" className="w-full text-center">Login with Magic Link</a>
+    <a data-primary href="/passwordlessdevice" className="w-full text-center mt-2">Login with Device</a>
   </>
 }
 

@@ -18,7 +18,7 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
 
   return (
     <>
-      <h1>Passwordless Login</h1>
+      <h1>Magic Link Login</h1>
       <p>Enter your email to sign in or register account using a one-time magic link</p>
       <form>
         <SearchParamStateCallout searchParams={ searchParams } />
