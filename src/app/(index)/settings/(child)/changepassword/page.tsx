@@ -1,6 +1,5 @@
-import { AuthGuard, Authentication } from "@/api/authentication"
-import { LoggedInUser, AccountManagement } from "@/api/user-management"
-import { sendEmailVerification } from "@/api/verification"
+import { Authentication } from "@/api/authentication"
+import { LoggedInUser, AccountManagement } from "@/api/account"
 import { Form } from "@/component/form"
 import { Input } from "@/component/input"
 import { Navigation } from "@/lib/error"
@@ -26,8 +25,6 @@ export default async function ChangePasswordPage({ searchParams }: any) {
     return <>
       <h1>Change Password</h1>
       <p>You do not have a password when registered using Magic links.</p>
-      <br />
-      <a href="/settings/createpassword" data-primary>Create Password</a>
     </>
 
   if (!await LoggedInUser.isVerified()) {
@@ -42,7 +39,6 @@ export default async function ChangePasswordPage({ searchParams }: any) {
       <br />
       <button type="submit" formAction={ async (formData) => {
 
-
         "use server"
         try {
           const { username } = await Authentication.requireVerifiedSession()
@@ -53,7 +49,6 @@ export default async function ChangePasswordPage({ searchParams }: any) {
         catch (error: any) {
           Navigation.handleFormError(error)
         }
-
         
       } }>Change Password</button>
     </Form>

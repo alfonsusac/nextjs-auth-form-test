@@ -28,27 +28,22 @@ export default function LoginPage({ searchParams }: { searchParams: { [key: stri
       <Input { ...loginForm.fields.username.attributes } label={ loginForm.fields.username.label } defaultValue={ loginForm.defaultValues.username.get() } />
       <Input { ...loginForm.fields.password.attributes } label={ loginForm.fields.password.label } />
       <br />
-      <button
-        type="submit"
-        formAction={
-          async (formData) => {
-            "use server"
-            try {
-              await Authentication.login(loginForm.validate(formData))
-              Navigation.redirectTo('/', 'success=Successfuly logged in')
-            }
-            catch (error) {
-              Navigation.handleFormError(error)
-            }
-          }
-        }
-      >
-        Login
-      </button>
+      <button type="submit" formAction={ action }>Login</button>
       <a href="/register">register</a>
       <a href="/forgotpassword">forgot password</a>
     </Form >
     <section className="opacity-40">or continue with</section>
     <a data-primary href="/passwordless" className="w-full text-center">Login without Password</a>
   </>
+}
+
+async function action(formData: FormData) {
+  "use server"
+  try {
+    await Authentication.login(loginForm.validate(formData))
+    Navigation.redirectTo('/', 'success=Successfuly logged in')
+  }
+  catch (error) {
+    Navigation.handleFormError(error)
+  }
 }

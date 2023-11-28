@@ -1,7 +1,7 @@
 import prisma from "@/lib/singleton"
 import { cache } from "react"
 
-export namespace Password {
+export namespace UserPassword {
 
   export const find = cache(async (
     username: string
@@ -28,9 +28,9 @@ export namespace Password {
   })
 
 
-  export const forceUpdate = cache(async ({ username, newPasswordHash }: {
+  export const forceUpdate = cache(async ({ username, newHashedPassword: newPasswordHash }: {
     username: string,
-    newPasswordHash: string
+    newHashedPassword: string
   }
   ) => {
     return await prisma.userPassword.update({

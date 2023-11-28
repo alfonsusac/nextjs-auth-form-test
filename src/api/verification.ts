@@ -6,8 +6,8 @@ import { DB, UserVerification } from "@/model/verification"
 import { logger } from "@/lib/logger"
 import { ClientErrorBaseClass } from "@/lib/error/class"
 import { development, production } from "@/lib/env"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { PrismaUtil } from "@/model"
+import { DecodingError, InvalidSearchParam } from "@/lib/error"
 
 /** ========================================================================================
 *
@@ -20,7 +20,6 @@ import { PrismaUtil } from "@/model"
  *  Verification JWT Object
  */
 export const verificationJWT = new JWTHandler<{ verification: string }>("24 h")
-export const passwordlessVerificationJWT = new JWTHandler<{ verification: string, email: string }>("24 h")
 
 /** ========================================================================================
 *
@@ -67,27 +66,6 @@ export async function verifyEmailVerification(jwt: string) {
   return UserVerification.verifyKey(key)
 
 }
-
-/** ========================================================================================
-*
-*  🚧 [Error Class] 🚧
-*
-* ========================================================================================
-*/
-
-export class DecodingError extends ClientErrorBaseClass {
-  constructor(servermsg: string) {
-    super("Invalid Verification Token", servermsg)
-  }
-}
-
-export class InvalidSearchParam extends ClientErrorBaseClass {
-  constructor(msg: string) {
-    super(msg)
-    console.log("Invalid Search Params: " + msg)
-  }
-}
-export class VerificationError extends ClientErrorBaseClass { }
 
 /** ========================================================================================
 *
@@ -171,7 +149,10 @@ export class EmailVerification<
     log("Token Sent")
   }
 
-  async verify(purpose: string, key: string) {
+  async verify(
+    purpose: string,
+    key: string
+  ) {
 
     if (!purpose) throw new InvalidSearchParam("Purpose not provided")
     if (!key) throw new InvalidSearchParam("Key not provided")
@@ -190,3 +171,7 @@ export class EmailVerification<
     return payload.data as Data
   }
 }
+
+
+
+

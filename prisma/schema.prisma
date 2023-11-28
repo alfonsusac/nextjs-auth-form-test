@@ -10,13 +10,13 @@ datasource db {
 }
 
 model User {
-  // userid       String            @id
-  username     String            @unique
+  username     String            @id @unique
   email        String            @unique
   provider     String // "password" | "magiclink"
   password     UserPassword?
   verification UserVerification?
   created_at   DateTime          @default(now())
+  User2FA      User2FA?
 }
 
 model UserPassword {
@@ -34,7 +34,13 @@ model UserVerification {
   expiry      DateTime
 }
 
+model User2FA {
+  user     User   @relation(fields: [username], references: [username])
+  username String @id @unique
+  secret   String @unique
+}
+
 model VerificationToken {
-  id     String   @id @default(uuid())
-  expiry DateTime
+  id      String   @id @default(uuid())
+  expiry  DateTime
 }

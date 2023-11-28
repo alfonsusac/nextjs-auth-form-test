@@ -12,14 +12,6 @@ import { Session } from "./session"
 
 
 /**
- *  Logs user in using passwordless or create new user
- */
-export async function passwordlessInitialize(email: string) {
-  console.log("Sending Passwordless Email Verification")
-  await Verifications.passwordlessVerification.send(email, { email })
-}
-
-/**
  *  Verify passwordless login
  */
 
@@ -28,23 +20,15 @@ export async function registerPasswordless(username: string, email: string) {
     username,
     email,
     provider: "magiclink",
-    password: undefined
+    hashedPassword: undefined
   })
   if (!user) {
-    throw new Error('User is unexpectedly created? ')
+    throw new Error('User is unexpectedly not created? ')
   }
   await Session.create({
     username: user.username,
     email: user.email,
     verified: true,
   })
-
 }
 
-
-/** ========================================================================================
-*
-*  🚧 [Error Class] 🚧
-*
-* ========================================================================================
-*/

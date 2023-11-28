@@ -1,13 +1,12 @@
 import { Authentication } from "@/api/authentication"
-import { LoggedInUser } from "@/api/user-management"
 import { sendEmailVerification } from "@/api/verification"
 import { Form } from "@/component/form"
-import { Navigation, redirectTo } from "@/lib/error"
+import { Navigation } from "@/lib/error"
 
 export default async function Page({ searchParams }: any) {
 
   const session = await Authentication.getSession()
-  if (!session) redirectTo('/login')
+  if (!session) Navigation.redirectTo('/login')
 
   return (
     <Form sp={ searchParams }>

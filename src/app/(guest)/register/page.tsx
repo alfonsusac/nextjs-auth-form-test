@@ -1,10 +1,8 @@
 import { Input } from "@/component/input"
 import { createForm } from "@/lib/validations/formData"
-import { sendEmailVerification } from "@/api/verification"
-import { SearchParamStateCallout } from "@/component/searchParams"
 import { Navigation } from "@/lib/error"
-import { Authentication } from "@/api/authentication"
 import { Form } from "@/component/form"
+import { Authentication } from "@/api/authentication"
 
 const form = createForm({
   'eml': {

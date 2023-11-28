@@ -10,7 +10,6 @@ export namespace DB {
         console.log("Creating Verification Token")
         return await prisma.verificationToken.create({
           data: {
-            purpose: data.purpose,
             expiry: Config.emailExpiration.getDate()
           }
         })

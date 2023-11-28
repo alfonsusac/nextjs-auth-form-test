@@ -1,5 +1,6 @@
 import { Authentication } from "@/api/authentication"
-import { Navigation, redirectTo } from "@/lib/error"
+import { AccountManagement, LoggedInUser } from "@/api/account"
+import { Navigation } from "@/lib/error"
 
 export async function IfNotLoggedIn(p: {
   children?: React.ReactNode
@@ -30,13 +31,36 @@ export async function IfVerified(p: {
   return <>{ session?.verified && p.children }</>
 }
 
-export async function AuthGuard(p: {
-  verified?: boolean
-  redirectTo?: string
+export async function IfApp2FAEnabled(p: {
+  children?: React.ReactNode
 }) {
   const session = await Authentication.getSession()
-  if (!session) redirectTo('/login', 'error=You are not authorized!')
-  if(p.verified && !session.verified) redirectTo('/', 'error=You need to verify your email!')
-  return <></>
+  if(!session) return null
+  const enabled = await AccountManagement.is2FAEnabled(session)
+  return <>{ enabled && p.children }</>
 }
 
+export async function IfApp2FADisabled(p: {
+  children?: React.ReactNode
+}) {
+  const session = await Authentication.getSession()
+  if (!session) return null
+  const enabled = await AccountManagement.is2FAEnabled(session)
+  return <>{ !enabled && p.children }</>
+}
+
+export async function IfUsingMagicLink(p: {
+  children?: React.ReactNode
+}) {
+  const user = await LoggedInUser.getUser()
+  if (!user) return null
+  return <>{ (user.provider==="magiclink") && p.children }</>
+}
+
+export async function IfNotUsingMagicLink(p: {
+  children?: React.ReactNode
+}) {
+  const user = await LoggedInUser.getUser()
+  if (!user) return null
+  return <>{ (user.provider !== "magiclink") && p.children }</>
+}

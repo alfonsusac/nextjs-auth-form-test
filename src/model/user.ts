@@ -1,8 +1,9 @@
 import prisma from "@/lib/singleton"
 import { cache } from "react"
 import { PrismaUtil } from "."
-import { Password } from "./password"
+import { UserPassword } from "./password"
 import { UserVerification } from "./verification"
+import { User2FA } from "./user2fa"
 
 type UserProvider = "password" | "magiclink"
 type IsUsingPassword<Provider extends UserProvider> = Provider extends "password" ? string : undefined
@@ -10,11 +11,11 @@ type IsUsingPassword<Provider extends UserProvider> = Provider extends "password
 export namespace User {
 
   export const create = cache(
-    async function <Provider extends UserProvider>({ username, email, provider, password }: {
+    async function <Provider extends UserProvider>({ username, email, provider, hashedPassword: password }: {
       username: string,
       email: string,
       provider: Provider
-      password: IsUsingPassword<Provider>
+      hashedPassword: IsUsingPassword<Provider>
     }) {
       try {
         if (provider === 'magiclink') return await prisma.user.create({ data: { username, email, provider } })
@@ -45,9 +46,10 @@ export namespace User {
     })
 
   export const remove = cache(
-    async function (username: string, email: string) {
-      try { await Password.forceDelete(username) } catch { }
+    async function ({ username, email }: {username: string, email: string}) {
+      try { await UserPassword.forceDelete(username) } catch { }
       try { await UserVerification.forceDelete(username) } catch { }
+      try { await User2FA.remove({ username }) } catch { }
       return await prisma.user.delete({ where: { username, email } })
     })
 

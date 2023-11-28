@@ -8,8 +8,8 @@ import { SVGProps } from "react"
 export default function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
 
   return <Form sp={ searchParams } className="
-  [&_h2]:text-2xl
-  [&_h2]:opacity-100
+  [&_header>h2]:text-2xl
+  [&_header>h2]:opacity-100
   ">
     <IfNotLoggedIn>
       <section>
@@ -51,6 +51,10 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
           <div>
             <h3>Email Verification</h3>
             <p>Verify email after logging in, or when critical action is needed.</p>
+          </div>
+          <div>
+            <h3>2FA via Authenticator </h3>
+            <p>Enables or disable 2FA via authenticator such as Google Auth or Authy using <b><code>otplib</code></b></p>
           </div>
           <div>
             <h3>Forgot Password</h3>

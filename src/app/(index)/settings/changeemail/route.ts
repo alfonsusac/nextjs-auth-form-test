@@ -1,16 +1,14 @@
 import { Authentication } from "@/api/authentication"
 import { Verifications } from "@/api/globals"
-import { AccountManagement } from "@/api/user-management"
-import { InvalidSearchParam } from "@/api/verification"
+import { AccountManagement } from "@/api/account"
 import { Navigation } from "@/lib/error"
-import { ClientErrorBaseClass } from "@/lib/error/class"
 import { NextRequest } from "next/server"
 
 export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   
   try {
-    const data = await Verifications.changeEmail.verify(
+    const data = await Verifications.changeEmailVerification.verify(
       request.nextUrl.searchParams.get('purpose') ?? "",
       request.nextUrl.searchParams.get('key') ?? "",
     )

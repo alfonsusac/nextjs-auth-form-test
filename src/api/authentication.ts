@@ -1,11 +1,13 @@
 import { Cryptography } from "@/lib/crypto"
 import { cache } from "react"
 import { User } from "@/model/user"
-import { Password } from "@/model/password"
+import { UserPassword } from "@/model/password"
 import { ClientError } from "@/lib/error/class"
 import { Navigation } from "@/lib/error"
 import { Verifications } from "./globals"
 import { Session } from "./session"
+import { PasswordStrategy } from "./strategy/password"
+import { MagicLinkEmailStrategy } from "./strategy/magiclink"
 
 
 /** ========================================================================================
@@ -20,42 +22,19 @@ import { Session } from "./session"
  * such as login, register, and logout.
  */
 export namespace Authentication {
-  /**
-   *  Register User
-   *  - hashes inputted password
-   *  - and store the new user detail to database
-   */
-  export async function register({ username, email, password }: { username: string, email: string, password: string }) {
-    
-    const hashedPwd = await Cryptography.hash(password)
-    await User.create({
-      username,
-      email,
-      provider: "password",
-      password: hashedPwd
-    })
 
-  }
+  export const register = PasswordStrategy.register 
+  export const login = PasswordStrategy.login
+  export const loginWith2FA = PasswordStrategy.loginWith2FA
+  export const requestForgotPassword = PasswordStrategy.requestForgotPassword
+  export const resetPassword = PasswordStrategy.resetPassword
 
-  /**
-   *  Logs user in.
-   */
-  export async function login({ username, password }: { username: string, password: string }) {
+  export const requestPasswordlessLogin = MagicLinkEmailStrategy.requestLogin
+  export const loginViaPasswordless = MagicLinkEmailStrategy.login
+  export const registerViaPasswordless = MagicLinkEmailStrategy.register
 
-    const storedpassword = await Password.find(username)
-    if (!storedpassword) ClientError.invalidCredential("User not found")
 
-    if (!await Cryptography.verify(storedpassword.value, password))
-      ClientError.invalidCredential("Password does not match")
 
-    const { user } = storedpassword
-    await Session.create({
-      username: user.username,
-      email: user.email,
-      verified: user.verification?.verified ?? false,
-    })
-  }
-  
   /**
    *  Logs user out
    */
@@ -63,39 +42,8 @@ export namespace Authentication {
     Session.destroy()
   }
 
-  /**
-   *  Forgot Password
-   */
-  export async function requestForgotPassword({ email }: { email: string }) {
 
-    const user = await User.findEmail(email)
-    if (!user)
-      ClientError.invalidInput("Email not found!")
-    if (user.provider === "magiclink")
-      ClientError.invalidInput("This user is using passwordless. Login with passwordless instead!")
 
-    await Verifications.forgotPassword.send(email, {
-      username: user.username,
-    })
-  }
-
-  /**
-   *  Reset Password
-   */
-  export async function resetPassword({ username, newPassword }: {
-    username: string,
-    newPassword: string
-  }) {
-    // Hash the inputted password
-    const hashedPwd = await Cryptography.hash(newPassword)
-    // Store the new user detail to the database
-    return await Password.forceUpdate({
-      username,
-      newPasswordHash: hashedPwd
-    })
-  }
-
-  
   export const getSession = cache(async function () {
     return await Session.get()
   })
@@ -115,13 +63,13 @@ export namespace Authentication {
       Navigation.notVerified()
     return session
   }
-  
+
 }
 
 /**
  * ------ [ Auth Guard ] ------------------------------------------------
  */
-export namespace AuthGuard{
+export namespace AuthGuard {
   export async function memberOnly() {
     const session = await Authentication.getSession()
   }
@@ -135,7 +83,7 @@ export namespace AuthGuard{
   }
   export async function guestOnly() {
     const session = await Authentication.getSession()
-    if(session) Navigation.redirectTo('/')
+    if (session) Navigation.redirectTo('/')
   }
 
 }

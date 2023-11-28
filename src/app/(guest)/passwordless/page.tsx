@@ -1,11 +1,11 @@
 import { Input } from "@/component/input"
 import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
-import { passwordlessInitialize } from "@/api/passwordless"
 import { SearchParamStateCallout } from "@/component/searchParams"
+import { Authentication } from "@/api/authentication"
 
 const form = createForm({
-  'eml': {
+  'email': {
     label: "Email",
     required: "Email is required",
     email: "Email has to be in email format",
@@ -22,15 +22,15 @@ export default function PasswordlessLoginPage({ searchParams }: { searchParams: 
       <p>Enter your email to sign in or register account using a one-time magic link</p>
       <form>
         <SearchParamStateCallout searchParams={ searchParams } />
-        <Input { ...form.fields.eml.attributes } label={ form.fields.eml.label } defaultValue={ form.defaultValues.eml.get() } />
+        <Input { ...form.fields.email.attributes } label={ form.fields.email.label } defaultValue={ form.defaultValues.email.get() } />
         <br />
         <button type="submit" formAction={
           async (formData) => {
             "use server"
             console.log("Submitted passwordless login page")
             try {
-              const { eml } = form.validate(formData)
-              await passwordlessInitialize(eml)
+              const { email } = form.validate(formData)
+              await Authentication.requestPasswordlessLogin({ email})
               Navigation.success('Verification Email Sent!\n Please check your email.')
             }
             catch (error) {

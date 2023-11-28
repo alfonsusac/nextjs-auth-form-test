@@ -1,6 +1,5 @@
 import { Authentication } from "@/api/authentication"
 import { Verifications } from "@/api/globals"
-import { InvalidSearchParam } from "@/api/verification"
 import { Input } from "@/component/input"
 import { SearchParamStateCallout } from "@/component/searchParams"
 import { Navigation } from "@/lib/error"
@@ -23,7 +22,7 @@ export const dynamic = 'force-dynamic'
 export default async function ResetPassword({ searchParams }: any) {
 
   try {
-    const data = await Verifications.forgotPassword.verify(searchParams.purpose, searchParams.key)
+    const data = await Verifications.forgotPasswordVerification.verify(searchParams.purpose, searchParams.key)
     const token = await resetPasswordToken.encode({ username: data.username })
 
     return <>

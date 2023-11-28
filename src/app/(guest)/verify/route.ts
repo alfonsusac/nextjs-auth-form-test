@@ -1,7 +1,7 @@
 import { Authentication } from "@/api/authentication"
 import { Session } from "@/api/session"
-import { DecodingError, verifyEmailVerification } from "@/api/verification"
-import { Navigation } from "@/lib/error"
+import { verifyEmailVerification } from "@/api/verification"
+import { DecodingError, Navigation } from "@/lib/error"
 import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest) {

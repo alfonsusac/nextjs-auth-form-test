@@ -5,11 +5,7 @@ import { EmailVerification } from "./verification"
 
 export namespace Config {
   export const emailExpiration = new ExpiryDate("1d")
-
-
 }
-
-
 
 export namespace Verifications {
   export const passwordlessVerification = new EmailVerification<{
@@ -20,14 +16,14 @@ export namespace Verifications {
     (url) => `Hi! One time login link: ${url}`,
     "/passwordless/verify",
   )
-  export const forgotPassword = new EmailVerification<{
+  export const forgotPasswordVerification = new EmailVerification<{
     username: string
   }>("forgotpassword", "1d",
     "One-time link to reset password",
     (url) => `Reset your password here: ${url}`,
     "/forgotpassword/reset",
   )
-  export const changeEmail = new EmailVerification<{
+  export const changeEmailVerification = new EmailVerification<{
     username: string,
     email: string
   }>("changeEmail", "1d",

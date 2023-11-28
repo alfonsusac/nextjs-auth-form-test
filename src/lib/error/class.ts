@@ -6,7 +6,7 @@ export class ClientErrorBaseClass extends Error {
 }
 
 export namespace ClientError {
-
+  
   export function invalidInput(clientmsg: string): never {
     throw new ClientErrorBaseClass(clientmsg, clientmsg)
   }
@@ -16,8 +16,8 @@ export namespace ClientError {
   export function notAuthenticated(): never {
     throw new ClientErrorBaseClass("Not Authenticated. Please sign in to continue.")
   }
-  export function invalidCredential(msg: string): never {
-    throw new ClientErrorBaseClass("Invalid Credentials", msg)
+  export function invalidCredential(servermsg: string): never {
+    throw new ClientErrorBaseClass("Invalid Credentials", servermsg)
   }
 
 }

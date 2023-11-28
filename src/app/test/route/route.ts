@@ -8,7 +8,7 @@ export async function GET() {
   await User.create({
     email: "alfonssusac@gmail.com",
     username: "alfonso",
-    password: "alfonso",
+    hashedPassword: "alfonso",
     provider: "password"
   })
   return NextResponse.json(Object.fromEntries(header.entries()))

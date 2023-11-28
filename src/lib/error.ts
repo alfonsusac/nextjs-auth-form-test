@@ -2,15 +2,7 @@ import { Request } from "./request"
 import * as NextNavigation from "next/navigation"
 import { headers } from "next/headers"
 import { ClientErrorBaseClass } from "./error/class"
-import { InvalidSearchParam } from "@/api/verification"
-
-
-export function redirectTo(path: string | undefined, query?: string): never {
-  console.log("Redirecting to: " + path)
-  NextNavigation.redirect(`${path}${query ? `?${query}` : ''}`)
-}
-
-
+import { development } from "./env"
 
 
 /**
@@ -81,6 +73,23 @@ export namespace Navigation {
   export function unknownError(error: unknown): never {
     console.log("Unknown Server Error Occurred")
     console.log(error)
+    if (development) {
+      errorMessage(JSON.stringify(error))
+    }
     errorMessage("Unknown server error")
   }
 }
+
+export class DecodingError extends ClientErrorBaseClass {
+  constructor(servermsg: string) {
+    super("Invalid Verification Token", servermsg)
+  }
+}
+
+export class InvalidSearchParam extends ClientErrorBaseClass {
+  constructor(msg: string) {
+    super(msg)
+    console.log("Invalid Search Params: " + msg)
+  }
+}
+
