@@ -1,7 +1,7 @@
 import { Authentication } from "@/api/authentication"
 import { Verifications } from "@/api/globals"
 import { AccountManagement, LoggedInUser } from "@/api/account"
-import { IfApp2FADisabled, IfApp2FAEnabled, IfNotUsingMagicLink, IfNotVerified, IfUsingMagicLink, IfVerified } from "@/component/authentication"
+import { IfApp2FADisabled, IfApp2FAEnabled, IfNotUsingMagicLink, IfNotVerified, IfUsingMagicLink, IfUsingPasswordLogin, IfVerified } from "@/component/authentication"
 import { Form } from "@/component/form"
 import { Navigation } from "@/lib/error"
 import { ClientError } from "@/lib/error/class"
@@ -28,8 +28,6 @@ export default async function Page({ searchParams }: any) {
 
         <h2>Account</h2>
 
-        <p className="opacity-60 italic">Logged in via Magic Link</p>
-
         <IfNotVerified>
           <section>
             <span>Your email is not verified. Please verify your email</span>
@@ -47,9 +45,9 @@ export default async function Page({ searchParams }: any) {
             <IfNotVerified><span className="opacity-20">Please verify your email to change password</span></IfNotVerified>
             <IfUsingMagicLink><span className="opacity-20">You cant change password when logged in using magic link.</span></IfUsingMagicLink>
           </span>
-          <IfNotUsingMagicLink>
+          <IfUsingPasswordLogin>
             <IfVerified><a href="/settings/changepassword">Change Password</a></IfVerified>
-          </IfNotUsingMagicLink>
+          </IfUsingPasswordLogin>
         </section>
 
         <IfApp2FADisabled>
