@@ -49,7 +49,7 @@ export class JWTHandler<Payload extends PayloadType> {
 
 
 
-export class JWTCookieHandler<Payload extends {}>{
+export class JWTCookieHandler<Payload extends {[key: string]: any}>{
   readonly jwt: JWTHandler<Payload>
   readonly cookie: Cookie
   constructor(

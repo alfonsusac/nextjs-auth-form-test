@@ -1,5 +1,5 @@
 import { Authentication } from "@/api/authentication"
-import { LoginSession, Session } from "@/api/session"
+import { LoginWith2FASession, Session } from "@/api/session"
 import { Form } from "@/component/form"
 import { Input } from "@/component/input"
 import { AuthenticatorMFA } from "@/lib/2fa"
@@ -19,7 +19,7 @@ export default async function MFAVerificationViaApp({ searchParams }: any) {
   const session = await Session.get()
   if(session) Navigation.redirectTo('/')
   
-  const loginsession = await LoginSession.get()
+  const loginsession = await LoginWith2FASession.get()
   if (!loginsession) Navigation.redirectTo('/login')
 
   return <>
@@ -39,7 +39,7 @@ async function action(formData: FormData) {
   "use server"
   try {
     const { code } = form.validate(formData)
-    const session = await LoginSession.get()
+    const session = await LoginWith2FASession.get()
     if (!session) Navigation.redirectTo('/login')
 
     await Authentication.loginWith2FA({

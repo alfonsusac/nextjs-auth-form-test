@@ -53,7 +53,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: { [
       </Form >
       <section className="opacity-40">or continue with</section>
       <a data-primary href="/passwordless" className="w-full text-center">Register without Password (Magic Links)</a>
-      <a data-primary href="/passwordlessdevice/register" className="w-full text-center mt-4">Register without Password (Device Sign In)</a>
+      <a data-primary href="/passwordlessdevice" className="w-full text-center mt-4">Register without Password (Device Sign In)</a>
     </>
   )
 }

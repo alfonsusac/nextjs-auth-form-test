@@ -4,7 +4,7 @@ import { Input } from "@/component/input"
 import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
 
-const passwordlessRegisterForm = createForm({
+const form = createForm({
   'username': {
     label: "Username",
     required: "Username is required!",
@@ -22,7 +22,7 @@ export default async function PasswordlessRegisterPage({ searchParams }: { searc
       <h1>Create Username</h1>
       <p>for email: { session.email }</p>
       <form>
-        <Input { ...passwordlessRegisterForm.fields.username.attributes } label={ passwordlessRegisterForm.fields.username.label } />
+        <Input { ...form.fields.username.attributes } label={ form.fields.username.label } />
         <input value={ session.email } hidden name="email" readOnly />
         <br />
         <button type="submit" formAction={ action }>Register</button>
@@ -37,7 +37,7 @@ async function action(formData: FormData) {
     const user = await getCurrentSession()
     if (!user) Navigation.redirectTo('/')
 
-    const { username } = passwordlessRegisterForm.validate(formData)
+    const { username } = form.validate(formData)
     const email = formData.get('email')
 
     if (email !== user.email)

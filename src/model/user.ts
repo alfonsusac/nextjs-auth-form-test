@@ -18,7 +18,7 @@ export namespace User {
       hashedPassword: IsUsingPassword<Provider>
     }) {
       try {
-        if (provider === 'magiclink') return await prisma.user.create({ data: { username, email, provider } })
+        if (provider !== 'password') return await prisma.user.create({ data: { username, email, provider } })
         if (provider === "password") return await prisma.user.create({ data: { username, email, provider, password: { create: { value: password as any } } } })
       }
       catch (error: any) {

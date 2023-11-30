@@ -42,9 +42,11 @@ model User2FA {
 }
 
 model UserDeviceAuth {
+  id        String @id
+  publicKey String
+  algorithm String
   user      User   @relation(fields: [username], references: [username])
-  username  String @id @unique
-  challenge String @unique
+  username  String @unique
 }
 
 model Authenticator {

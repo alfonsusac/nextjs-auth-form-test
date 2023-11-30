@@ -1,7 +1,11 @@
-import { Form } from "@/component/form"
-import { Input } from "@/component/input"
 import { Navigation } from "@/lib/error"
 import { createForm } from "@/lib/validations/formData"
+import { DeviceLoginForm } from "./client"
+import { server } from '@passwordless-id/webauthn'
+import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types"
+import { Request } from "@/lib/request"
+import { User } from "@/model/user"
+import { ClientError } from "@/lib/error/class"
 
 const form = createForm({
   'username': {
@@ -13,28 +17,16 @@ const form = createForm({
 })
 
 export default async function LoginViaDevice({ searchParams }: any) {
-  
+
   return <>
     <h1>Login with Device</h1>
     <p>Using passwordless method that securely login this platform as a key</p>
-    <Form sp={ searchParams }>
-      <Input { ...form.fields.username.attributes } label={ form.fields.username.label } />
-      <br />
-      <button type="submit" formAction={ action }>Register</button>
-    </Form>
+    <DeviceLoginForm
+      sp={ searchParams }
+      nonce={ crypto.randomUUID() }
+    />
     <section className="opacity-40">or continue with</section>
     <a data-primary href="/register" className="w-full text-center">Register with Password</a>
     <a data-primary href="/passwordless" className="w-full text-center mt-4">Login without Password (Magic Link)</a>
   </>
-}
-
-async function action(formData: FormData) {
-  "use server"
-  try {
-    const { username } = form.validate(formData)
-
-
-  } catch (error) {
-    Navigation.handleFormError(error)
-  }
 }

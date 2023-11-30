@@ -3,7 +3,7 @@ import { ClientError } from "@/lib/error/class"
 import { UserPassword } from "@/model/userpassword"
 import { User } from "@/model/user"
 import { User2FA } from "@/model/user2fa"
-import { LoginSession, Session } from "../session"
+import { LoginWith2FASession, Session } from "../session"
 import { Navigation } from "@/lib/error"
 import { AuthenticatorMFA } from "@/lib/2fa"
 import { development } from "@/lib/env"
@@ -35,7 +35,7 @@ export namespace PasswordStrategy {
   
     const using2fa = await User2FA.find({ username })
     if (using2fa) {
-      await LoginSession.create({
+      await LoginWith2FASession.create({
         username: user.username
       })
       if (development) {
@@ -63,7 +63,7 @@ export namespace PasswordStrategy {
     const user = await User.findUsername(input.username)
     if (!user) ClientError.invalidCredential('Username not found!')
   
-    LoginSession.destroy()
+    LoginWith2FASession.destroy()
   
     await Session.create({
       username: user.username,

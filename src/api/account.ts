@@ -12,6 +12,7 @@ export namespace LoggedInUser {
   export async function getUser() {
     const { username } = await Authentication.requireSession()
     const user = await User.findUsername(username)
+    
     if (!user) {
       await Authentication.logout()
       Navigation.notAuthenticated()
