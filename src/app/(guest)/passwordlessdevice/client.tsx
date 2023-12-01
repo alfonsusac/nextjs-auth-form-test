@@ -31,6 +31,7 @@ export function DeviceLoginForm({ nonce, sp }: {
       const getuserdevicesres = await getUserDeviceAuthIDAction(username)
       if(getuserdevicesres.error) ClientError.invalidInput(getuserdevicesres.error)
 
+      console.log(getuserdevicesres)
 
       // Authenticate if user exists
       if (getuserdevicesres.ids && getuserdevicesres.ids.length > 0) {
@@ -39,6 +40,7 @@ export function DeviceLoginForm({ nonce, sp }: {
         console.log(authentication)
 
         const res = await verifyAuthenticationAction(authentication, challenge)
+        return
       }
 
       const getuserres = await checkUsernameForDeviceAuthAction(username)
@@ -60,11 +62,6 @@ export function DeviceLoginForm({ nonce, sp }: {
         const res = await verifyRegistrationAction(registration, challenge)
         return res
       }
-
-
-
-
-      ClientError.invalidInput("Test Error")
     } catch (error: any) {
       return { error: error.message ?? JSON.stringify(error) }
     }

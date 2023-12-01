@@ -14,6 +14,8 @@ export async function getUserDeviceAuthIDAction(username: string) {
     const userdevices = await prisma.userDeviceAuth.findMany({
       where: { username }
     })
+    console.log("User Devices")
+    console.log(userdevices)
     return { ids: userdevices.map(u => u.id) } as const
   } catch (error: any) {
     console.error(error)
@@ -29,6 +31,8 @@ export async function checkUsernameForDeviceAuthAction(username: string) {
       ClientError.invalidInput('This user is using magic link. Please login via Magic Link instead!')
     if (user.provider === 'password')
       ClientError.invalidInput('This user is using password. Please login using Password instead!')
+    if (user.provider === 'webauthn')
+      return { nouser: false }
     else
       ClientError.invalidInput('This user is not using webauthn. Please provide what to do on other provider: ' + user.provider)
   } catch (error: any) {
@@ -71,11 +75,13 @@ export async function verifyAuthenticationAction(
   challenge: string
 ) {
   try {
+    console.log("HELLOO?")
     const credentialKeyResult = await prisma.userDeviceAuth.findUnique({
-      where: { id: authentication.credentialId }
+      where: { id: authentication.credentialId },
+      include: { user: {} }
     })
-    if(!credentialKeyResult) ClientError.invalidInput("Credential Key Not Found")
-    const { username, ...credentialKey } = credentialKeyResult
+    if (!credentialKeyResult) ClientError.invalidInput("Credential Key Not Found")
+    const { username, user, ...credentialKey } = credentialKeyResult
 
     server.verifyAuthentication(authentication, {
       id: credentialKey.id,
@@ -87,9 +93,14 @@ export async function verifyAuthenticationAction(
       userVerified: true
     })
 
-    Navigation.redirectTo('/', 'success=Successfully logged in via device!')
+    await Session.create({
+      email: user.email,
+      username: username,
+      verified: true
+    })
+
   } catch (error: any) {
-    console.error(error)
     return { error: error.message ?? JSON.stringify(error) } as const
   }
+  Navigation.redirectTo('/', 'success=Successfully logged in via device!')
 }
