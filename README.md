@@ -1,4 +1,16 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+
+# Next.js Simple Auth
+
+**Authentication using Next.js App routing and server actions**
+
+![GitHub Repo Badge](https://img.shields.io/badge/GitHub-Repository-brightgreen)
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). I created this project to learn more about web authentication practices such as implementing JWTs using cookies and such. Proper security practices are followed as much as possible (within the best of my knowledge), while its not perfect, please check again for security measures when using this repository as a reference.
+
+Email API can be enabled when using the production environment. Otherwise, the verification key are logged to the server console in development.
+
+![image](https://github.com/alfonsusac/nextjs-auth-form-test/assets/20208219/e33699ab-5480-4758-8332-bfa18de9c7ad)
 
 ## Getting Started
 
@@ -14,23 +26,46 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features & Concepts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Password Hashing
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Login via password, hashed with argon2id for enhanced security.
 
-## Learn More
+### Passwordless
 
-To learn more about Next.js, take a look at the following resources:
+Login without a password, verification via email using Resend.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Email Verification
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Verify email after logging in or when a critical action is needed.
 
-## Deploy on Vercel
+### 2FA via Authenticator
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Enables or disables 2FA via an authenticator such as Google Auth or Authy using otplib.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Forgot Password
+
+Send email verification when the password is forgotten to reset to a new password.
+
+### JWT
+
+Stores session state in the client, authenticating the user without accessing the database.
+
+### WebAuthn
+
+Log in via device authentication such as PIN or Biometrics. Powered by [passwordless.id](https://passwordless.id).
+
+### No Client Components
+
+Allowing progressive enhancement. Client components can still be used to increase interactivity.
+
+### Form builder
+
+Unify client and server-side validations. (This is just a proof of concept since it doesn't yet support all validations haha)
+
+## Technologies
+
+- [Next.js](https://nextjs.org/) - Full-stack JavaScript Framework
+- [Prisma](https://www.prisma.io/) - Database ORM
+- [Resend](https://resend.com/) - Email API
