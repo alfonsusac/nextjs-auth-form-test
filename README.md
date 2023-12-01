@@ -12,6 +12,9 @@ Email API can be enabled when using the production environment. Otherwise, the v
 
 ![image](https://github.com/alfonsusac/nextjs-auth-form-test/assets/20208219/e33699ab-5480-4758-8332-bfa18de9c7ad)
 
+![image](https://github.com/alfonsusac/nextjs-auth-form-test/assets/20208219/0a4c83a4-699b-493b-8a14-48171439fc92)
+
+
 ## Getting Started
 
 First, run the development server:
