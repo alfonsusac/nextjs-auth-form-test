@@ -3,6 +3,7 @@ import { IfNotLoggedIn, IfLoggedIn } from "@/component/authentication"
 import { Form } from "@/component/form"
 import { Navigation } from "@/lib/error"
 import { SVGProps } from "react"
+import { TodoList } from "./todo"
 
 
 export default function HomePage({ searchParams }: { searchParams: { [key: string]: string } }) {
@@ -66,8 +67,16 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
             <p>Stores session state in the client, authenticating user without accessing database.</p>
           </div>
           <div>
+            <h3>WebAuthn</h3>
+            <p>Log in via device authentication such as PIN or Biometrics. Powered by passwordless.id</p>
+          </div>
+          <div>
             <h3>No Client Components</h3>
             <p>Allowing progressive enhancement. Client component can still be used to increase interactivity</p>
+          </div>
+          <div>
+            <h3>Form builder</h3>
+            <p>Unify client and server-side validations (This is just a proof of concept since it doesnt yet support all validations haha)</p>
           </div>
         </div>
       </section>
@@ -110,10 +119,10 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
     <IfLoggedIn>
       <h1>To-do</h1>
       You are doing great! Keep it up!
+      <TodoList />
     </IfLoggedIn>
   </Form>
 }
-
 
 
 

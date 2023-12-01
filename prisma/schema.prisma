@@ -18,6 +18,7 @@ model User {
   created_at     DateTime          @default(now())
   User2FA        User2FA?
   UserDeviceAuth UserDeviceAuth[]
+  Post           Post[]
 }
 
 model UserPassword {
@@ -61,4 +62,11 @@ model Authenticator {
 model VerificationToken {
   id     String   @id @default(uuid())
   expiry DateTime
+}
+
+model Post {
+  id           String @id @default(uuid())
+  content      String
+  owner        User   @relation(fields: [ownerUsername], references: [username])
+  ownerUsername String
 }

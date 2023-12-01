@@ -1,7 +1,7 @@
 import { Authentication } from "@/api/authentication"
 import { Verifications } from "@/api/globals"
 import { AccountManagement, LoggedInUser } from "@/api/account"
-import { IfApp2FADisabled, IfApp2FAEnabled, IfNotUsingMagicLink, IfNotVerified, IfUsingMagicLink, IfUsingPasswordLogin, IfVerified } from "@/component/authentication"
+import { IfApp2FADisabled, IfApp2FAEnabled, IfNotUsingMagicLink, IfNotVerified, IfUsingMagicLink, IfUsingPasswordLogin, IfUsingWebAuthn, IfVerified, UserWebAuthnNumber } from "@/component/authentication"
 import { Form } from "@/component/form"
 import { Navigation } from "@/lib/error"
 import { ClientError } from "@/lib/error/class"
@@ -68,7 +68,7 @@ export default async function Page({ searchParams }: any) {
             <IfVerified><button data-destructive data-destructiven formAction={ disableApp2FAAction }>Disable 2FA</button></IfVerified>
           </section>
         </IfApp2FAEnabled>
-
+        
         <section>
           <span>Log out</span>
           <button formAction={ logoutAction }>Log out</button>
